@@ -15,18 +15,16 @@ import {
   Dimensions,
   Easing,
   TextInput,
-  Linking,
   KeyboardAvoidingView,
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
 import { useSafeArea } from 'react-native-safe-area-context';
 import BottomSheet from 'reanimated-bottom-sheet';
-import { useNavigation } from '@react-navigation/native';
 import { RectButton } from 'react-native-gesture-handler';
-
-type QuestResults = 'positive' | 'neutral' | 'negative';
+import { QuestResults } from './types';
+import { Results } from './Results';
+import Touchable from '../../components/Touchable';
 
 const { height } = Dimensions.get('screen');
 
@@ -41,14 +39,6 @@ const initialState = {
 
 function reducer(state, newState) {
   return { ...state, ...newState };
-}
-
-// Workaround for RectButton not working inside the bottom sheet
-function Touchable({ children, ...props }) {
-  if (Platform.OS === 'ios') {
-    return <TouchableOpacity {...props}>{children}</TouchableOpacity>;
-  }
-  return <RectButton {...props}>{children}</RectButton>;
 }
 
 function QuestButton({ id, text, onPress, selected }) {
@@ -319,147 +309,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
   );
 }
 
-function PositiveResults({ onShowQuest }) {
-  const navigation = useNavigation();
-  return (
-    <>
-      <AntDesign name="smile-circle" size={50} color="#79BC6A" />
-      <Text style={styles.cardTitle}>SIN RIESGOS</Text>
-      <Text style={styles.cardSubTitle}>
-        {`No contás con síntomas que puedan estar relacionados con el contagio de coronavirus, como así tampoco haber estado posiblemente expuesto a gente contagiada.\n\nTe proponemos repasar el listado de medidas preventivas para evitar el contagio y a compartir con otros esta información.`}
-      </Text>
-      <RectButton
-        style={[styles.button, styles.activeButton, { width: '80%' }]}
-        onPress={() => navigation.navigate('Prevention')}
-      >
-        <Text style={[styles.buttonText, styles.activeButtonText]}>
-          Consejos para la prevención
-        </Text>
-      </RectButton>
-      <Text style={styles.cardSubTitle}>
-        {`Si tus síntomas fueron cambiando, por favor volvé a realizar el autodiagnóstico y seguí las recomendaciones dadas.`}
-      </Text>
-      <RectButton
-        style={[styles.button, styles.activeButton, { width: '80%' }]}
-        onPress={onShowQuest}
-      >
-        <Text style={[styles.buttonText, styles.activeButtonText]}>
-          Realizar diagnóstico nuevamente
-        </Text>
-      </RectButton>
-    </>
-  );
-}
-function NeutralResults({ onShowQuest }) {
-  const navigation = useNavigation();
-  return (
-    <>
-      <AntDesign name="meho" size={50} color="#EEC20B" />
-      <Text style={styles.cardTitle}>RIESGO MODERADO</Text>
-      <Text style={styles.cardSubTitle}>
-        {`Algunos de tus síntomas pueden estar asociados al contagio de coronavirus pero no son concluyentes para determinar si efectivamente estás infectado.\n\nTe proponemos repasar el listado de medidas preventivas para evitar el contagio y a compartir con otros esta información.`}
-      </Text>
-      <RectButton
-        style={[styles.button, styles.activeButton, { width: '80%' }]}
-        onPress={() => navigation.navigate('Prevention')}
-      >
-        <Text style={[styles.buttonText, styles.activeButtonText]}>
-          Consejos para la prevención
-        </Text>
-      </RectButton>
-      <Text style={styles.cardSubTitle}>
-        {`Si tus síntomas fueron cambiando, por favor volvé a realizar el autodiagnóstico y seguí las recomendaciones dadas.`}
-      </Text>
-      <RectButton
-        style={[styles.button, styles.activeButton, { width: '80%' }]}
-        onPress={onShowQuest}
-      >
-        <Text style={[styles.buttonText, styles.activeButtonText]}>
-          Realizar diagnóstico nuevamente
-        </Text>
-      </RectButton>
-    </>
-  );
-}
-
-function NegativeResults({ onShowQuest }) {
-  const navigation = useNavigation();
-  return (
-    <>
-      <AntDesign name="frown" size={50} color="#E50000" />
-      <Text style={styles.cardTitle}>RIESGO ALTO</Text>
-      <Text style={styles.cardSubTitle}>
-        Es muy posible que te hayas contagiado de coronavirus.{`\n\n`}Podés
-        llamar a alguno de los siguientes números de organismos oficiales para
-        que te cuenten cómo proceder y recibir asistencia médica y psicológica:
-        {`\n\n`}Ministerio de Salud en CABA: {`\n`}
-      </Text>
-      <Text
-        style={{ color: '#007AFF' }}
-        onPress={async () => {
-          try {
-            await Linking.openURL(`tel:148`);
-          } catch (e) {
-            Alert.alert('Error al intentar hacer la llamada');
-          }
-        }}
-      >
-        148
-      </Text>
-      <Text style={styles.cardSubTitle}>
-        Ministerio de Salud en Argentina: {`\n`}
-      </Text>
-      <Text
-        style={{ color: '#007AFF' }}
-        onPress={async () => {
-          try {
-            await Linking.openURL(`tel:0800-222-1002`);
-          } catch (e) {
-            Alert.alert('Error al intentar hacer la llamada');
-          }
-        }}
-      >
-        0800-222-1002
-      </Text>
-      <Text style={styles.cardSubTitle}>
-        opción 1{`\n\n`}Gobierno de la Ciudad de Buenos Aires:{`\n`}
-      </Text>
-      <Text
-        style={{ color: '#007AFF' }}
-        onPress={async () => {
-          try {
-            await Linking.openURL(`tel:0800-222-1002`);
-          } catch (e) {
-            Alert.alert('Error al intentar hacer la llamada');
-          }
-        }}
-      >
-        107
-      </Text>
-      <RectButton
-        style={[styles.button, styles.activeButton, { width: '80%' }]}
-        onPress={() => navigation.navigate('Prevention')}
-      >
-        <Text style={[styles.buttonText, styles.activeButtonText]}>
-          Consejos para la prevención
-        </Text>
-      </RectButton>
-      <Text style={styles.cardSubTitle}>
-        {`Si tus síntomas fueron cambiando, por favor volvé a realizar el autodiagnóstico y seguí las recomendaciones dadas.`}
-      </Text>
-      <RectButton
-        style={[styles.button, styles.activeButton, { width: '80%' }]}
-        onPress={onShowQuest}
-      >
-        <Text style={[styles.buttonText, styles.activeButtonText]}>
-          Realizar diagnóstico nuevamente
-        </Text>
-      </RectButton>
-    </>
-  );
-}
-
-export default function Diagnostic({ navigation }) {
+export default function Diagnostic() {
   const insets = useSafeArea();
   const [translateY] = useState(new Animated.Value(height));
   const [visible, setVisible] = useState(true);
@@ -485,37 +335,7 @@ export default function Diagnostic({ navigation }) {
   };
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      {!visible && (
-        <ScrollView
-          style={[styles.container]}
-          showsVerticalScrollIndicator={false}
-        >
-          <Animated.Text
-            style={[
-              styles.cardTitle,
-              {
-                opacity: translateY.interpolate({
-                  inputRange: [0, height],
-                  outputRange: [1, 0],
-                }),
-              },
-            ]}
-          >
-            Resultado
-          </Animated.Text>
-          <Animated.View style={[styles.card, { transform: [{ translateY }] }]}>
-            {results === 'positive' && (
-              <PositiveResults onShowQuest={onShowQuest} />
-            )}
-            {results === 'neutral' && (
-              <NeutralResults onShowQuest={onShowQuest} />
-            )}
-            {results === 'negative' && (
-              <NegativeResults onShowQuest={onShowQuest} />
-            )}
-          </Animated.View>
-        </ScrollView>
-      )}
+      {!visible && <Results {...{ results, translateY, onShowQuest }} />}
       {visible && (
         <Animated.View
           style={{
@@ -536,52 +356,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  card: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderTopEndRadius: 30,
-    borderTopStartRadius: 30,
-    paddingTop: 80,
-    paddingBottom: 40,
-    paddingHorizontal: 20,
-  },
-  cardTitle: { fontSize: 22, padding: 20 },
-  cardSubTitle: { fontSize: 14, paddingTop: 20, textAlign: 'center' },
-  cardButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  smileButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    padding: 20,
-    margin: 20,
-    borderRadius: 75,
-    width: 120,
-    height: 120,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
-  },
-  smileButtonText: {
-    fontSize: 18,
-    paddingVertical: 10,
-  },
   questContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -594,7 +368,6 @@ const styles = StyleSheet.create({
   title: { paddingTop: 20 },
   subtitle: { paddingTop: 20, paddingBottom: 10 },
   button: {
-    // flex: 1,
     flexDirection: 'row',
     minHeight: 50,
     width: '49%',
@@ -639,7 +412,6 @@ const styles = StyleSheet.create({
     height: 80,
     padding: 20,
     backgroundColor: '#ffffffFA',
-    // paddingTop: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     shadowColor: '#ffffff',

@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
-import Diagnostic from '../screens/Diagnostic';
+import Diagnostic from '../screens/diagnostic/Diagnostic';
 import MapStack from '../screens/map/MapStack';
 
 const INITIAL_ROUTE_NAME = 'Map';
