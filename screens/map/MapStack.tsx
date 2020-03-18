@@ -6,11 +6,13 @@ import {
 } from '@react-navigation/stack';
 import Map from './Map';
 import MapInfo from './MapInfo';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useFocusEffect } from '@react-navigation/native';
+import { StatusBar, Platform } from 'react-native';
 
 type MapParamsList = {
   Map: undefined;
   MapInfo: undefined;
+  MapAlert: undefined;
 };
 
 export type MapStackNavProps<T extends keyof MapParamsList> = {
@@ -21,6 +23,13 @@ export type MapStackNavProps<T extends keyof MapParamsList> = {
 const Stack = createStackNavigator<MapParamsList>();
 
 export default function MapStack() {
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle('dark-content');
+      Platform.OS === 'android' && StatusBar.setBackgroundColor('transparent');
+    }, []),
+  );
+
   return (
     <Stack.Navigator
       initialRouteName="Map"

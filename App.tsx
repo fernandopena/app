@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { SplashScreen } from 'expo';
+import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
@@ -29,6 +30,20 @@ export default function App(props) {
         await Font.loadAsync({
           ...Ionicons.font,
           'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+        });
+
+        const preventionImages = [
+          require('./assets/images/prevention/coronavirus.png'),
+          require('./assets/images/prevention/fever.png'),
+          require('./assets/images/prevention/spread.png'),
+          require('./assets/images/prevention/transmission.png'),
+          require('./assets/images/prevention/hygiene.png'),
+          require('./assets/images/prevention/travel.png'),
+          require('./assets/images/prevention/quarantine.png'),
+        ];
+
+        const cacheImages = preventionImages.map(image => {
+          return Asset.fromModule(image).downloadAsync();
         });
       } catch (e) {
         // We might want to provide this error information to an error reporting service

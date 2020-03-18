@@ -7,11 +7,14 @@ import {
   StyleSheet,
   Animated,
   Platform,
+  View,
+  StatusBar,
 } from 'react-native';
 import { ScrollView, RectButton } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { QuestResults } from './types';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { height } = Dimensions.get('screen');
 
@@ -19,8 +22,7 @@ function PositiveResults({ onShowQuest }) {
   const navigation = useNavigation();
   return (
     <>
-      <AntDesign name="smile-circle" size={50} color="#79BC6A" />
-      <Text style={styles.cardTitle}>SIN RIESGOS</Text>
+      <Text style={[styles.cardTitle, { color: '#79BC6A' }]}>SIN RIESGOS</Text>
       <Text style={styles.cardSubTitle}>
         {`No contás con síntomas que puedan estar relacionados con el contagio de coronavirus, como así tampoco haber estado posiblemente expuesto a gente contagiada.\n\nTe proponemos repasar el listado de medidas preventivas para evitar el contagio y a compartir con otros esta información.`}
       </Text>
@@ -82,8 +84,7 @@ function NegativeResults({ onShowQuest }) {
   const navigation = useNavigation();
   return (
     <>
-      <AntDesign name="frown" size={50} color="#E50000" />
-      <Text style={styles.cardTitle}>RIESGO ALTO</Text>
+      <Text style={[styles.cardTitle, { color: '#E50000' }]}>RIESGO ALTO</Text>
       <Text style={styles.cardSubTitle}>
         Es muy posible que te hayas contagiado de coronavirus.{`\n\n`}Podés
         llamar a alguno de los siguientes números de organismos oficiales para
@@ -144,7 +145,7 @@ function NegativeResults({ onShowQuest }) {
         {`Si tus síntomas fueron cambiando, por favor volvé a realizar el autodiagnóstico y seguí las recomendaciones dadas.`}
       </Text>
       <RectButton
-        style={[styles.button, styles.activeButton, { width: '80%' }]}
+        style={[styles.button, styles.activeButton]}
         onPress={onShowQuest}
       >
         <Text style={[styles.buttonText, styles.activeButtonText]}>
@@ -155,20 +156,39 @@ function NegativeResults({ onShowQuest }) {
   );
 }
 
-interface ResultsProps {
-  onShowQuest: () => void;
-  translateY: Animated.Value;
-  results: QuestResults;
-}
+export default function Results({ route, navigation }) {
+  const { results } = route.params;
 
-export const Results: React.FC<ResultsProps> = ({
-  onShowQuest,
-  translateY,
-  results,
-}) => {
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle('dark-content');
+      // Platform.OS === 'android' &&
+      //   StatusBar.setBackgroundColor(Colors.primaryColor);
+    }, []),
+  );
+
+  const onShowQuest = () => {
+    navigation.goBack();
+  };
   return (
-    <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false}>
-      <Animated.Text
+    <SafeAreaView style={[styles.container]}>
+      <StatusBar barStyle="dark-content" />
+      <ScrollView
+        contentContainerStyle={[styles.container]}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.card}>
+          {results === 'positive' && (
+            <PositiveResults onShowQuest={onShowQuest} />
+          )}
+          {results === 'neutral' && (
+            <NeutralResults onShowQuest={onShowQuest} />
+          )}
+          {results === 'negative' && (
+            <NegativeResults onShowQuest={onShowQuest} />
+          )}
+        </View>
+        {/* <Animated.Text
         style={[
           styles.cardTitle,
           {
@@ -189,25 +209,21 @@ export const Results: React.FC<ResultsProps> = ({
         {results === 'negative' && (
           <NegativeResults onShowQuest={onShowQuest} />
         )}
-      </Animated.View>
-    </ScrollView>
+      </Animated.View> */}
+      </ScrollView>
+    </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   card: {
     flex: 1,
-    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderTopEndRadius: 30,
-    borderTopStartRadius: 30,
-    paddingTop: 80,
-    paddingBottom: 40,
     paddingHorizontal: 20,
   },
   cardTitle: { fontSize: 22, padding: 20 },
@@ -215,7 +231,6 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     minHeight: 50,
-    width: '49%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#fff',
