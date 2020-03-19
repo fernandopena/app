@@ -5,6 +5,11 @@
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": ["ios", "android", "web"],
+    "android": {
+      "package": "com.cotracksocial.cotrack",
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

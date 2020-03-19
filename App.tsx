@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Alert } from 'react-native';
 import { SplashScreen } from 'expo';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
+import { Notifications } from 'expo';
 
 import useLinking from './navigation/useLinking';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
+import registerForPushNotificationsAsync from './utils/registerForPushNotificationsAsync';
+import AppConstants from './constants/App';
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -15,6 +18,10 @@ export default function App(props) {
   >();
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
+  const [
+    notificationSubscription,
+    setNotificationSubscription,
+  ] = React.useState(null);
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
@@ -39,8 +46,21 @@ export default function App(props) {
       }
     }
 
+    registerForPushNotificationsAsync();
+
+    setNotificationSubscription(Notifications.addListener(_handleNotification));
     loadResourcesAndDataAsync();
+
+    return () => {
+      notificationSubscription && notificationSubscription.remove();
+    };
   }, []);
+
+  const _handleNotification = ({ data }) => {
+    if (data.code && data.code === AppConstants.PUSH_NOTIFICATIONS.MAP_01) {
+      Alert.alert(data.message);
+    }
+  };
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return null;
