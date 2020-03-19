@@ -16,6 +16,7 @@ import {
   Easing,
   TextInput,
   KeyboardAvoidingView,
+  StatusBar,
 } from 'react-native';
 import { useSafeArea } from 'react-native-safe-area-context';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -331,49 +332,15 @@ function Questionary({ onShowResults }: QuestionaryProps) {
 }
 
 export default function Diagnostic({ navigation }) {
-  const insets = useSafeArea();
-  const [translateY] = useState(new Animated.Value(height));
-  const [visible, setVisible] = useState(true);
-  const [results, setResults] = useState<undefined | QuestResults>();
-
-  const onShowQuest = () => {
-    Animated.timing(translateY, {
-      toValue: height,
-      easing: Easing.inOut(Easing.quad),
-      duration: 500,
-      useNativeDriver: true,
-    }).start(() => setVisible(true));
-  };
   const onShowResults = (value: QuestResults) => {
-    console.log('onShowResults -> onShowResults');
-    // setResults(value);
     navigation.navigate('DiagnosticResults', {
       results: value,
     });
-
-    // setVisible(false);
-    // Animated.timing(translateY, {
-    //   toValue: 0,
-    //   easing: Easing.inOut(Easing.quad),
-    //   duration: 300,
-    //   useNativeDriver: true,
-    // }).start();
   };
   return (
     <View style={styles.container}>
-      {/* {!visible && <Results {...{ results, translateY, onShowQuest }} />} */}
-      {visible && (
-        <Animated.View
-          style={{
-            opacity: translateY.interpolate({
-              inputRange: [0, height],
-              outputRange: [0, 1],
-            }),
-          }}
-        >
-          <Questionary onShowResults={onShowResults} />
-        </Animated.View>
-      )}
+      <StatusBar barStyle="light-content" />
+      <Questionary onShowResults={onShowResults} />
     </View>
   );
 }
@@ -385,7 +352,6 @@ const styles = StyleSheet.create({
   questContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    // backgroundColor: '#2c2c2f',
   },
   questButtons: {
     flexDirection: 'row',

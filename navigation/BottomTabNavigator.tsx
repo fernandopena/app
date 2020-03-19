@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useFocusEffect, RouteProp } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   createStackNavigator,
-  StackNavigationProp,
   TransitionPresets,
 } from '@react-navigation/stack';
 
@@ -61,26 +60,6 @@ function PreventionNavStack() {
   );
 }
 
-function DiagnosticModalNavStack() {
-  return (
-    <DiagnosticStack.Navigator
-      screenOptions={{
-        gestureEnabled: false,
-        cardOverlayEnabled: true,
-        ...TransitionPresets.ModalTransition,
-      }}
-      mode="modal"
-      headerMode="none"
-    >
-      <DiagnosticStack.Screen
-        name="Diagnostic"
-        component={DiagnosticNavStack}
-      />
-      <DiagnosticStack.Screen name="DiagnosticResults" component={Results} />
-    </DiagnosticStack.Navigator>
-  );
-}
-
 function DiagnosticNavStack() {
   useFocusEffect(
     React.useCallback(() => {
@@ -90,11 +69,24 @@ function DiagnosticNavStack() {
     }, []),
   );
   return (
-    <DiagnosticStack.Navigator screenOptions={defaultScreenOptions}>
+    <DiagnosticStack.Navigator
+      screenOptions={{
+        ...defaultScreenOptions,
+        gestureEnabled: false,
+        cardOverlayEnabled: true,
+        ...TransitionPresets.ModalTransition,
+      }}
+      mode="modal"
+    >
       <DiagnosticStack.Screen
         name="Diagnostic"
-        component={Diagnostic}
         options={{ headerTitle: 'Auto Diagnóstico' }}
+        component={Diagnostic}
+      />
+      <DiagnosticStack.Screen
+        name="DiagnosticResults"
+        component={Results}
+        options={{ headerShown: false }}
       />
     </DiagnosticStack.Navigator>
   );
@@ -104,12 +96,11 @@ export default function BottomTabNavigator() {
   return (
     <Tab.Navigator
       initialRouteName={INITIAL_ROUTE_NAME}
-      // tabBar={TabBarComponent}
       tabBarOptions={{ showLabel: false }}
     >
       <Tab.Screen
         name="Diagnostic"
-        component={DiagnosticModalNavStack}
+        component={DiagnosticNavStack}
         options={{
           title: 'Diagnóstico',
           tabBarIcon: ({ focused }) => (
