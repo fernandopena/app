@@ -3,28 +3,27 @@ import {
   Linking,
   Alert,
   Text,
-  Dimensions,
   StyleSheet,
-  Animated,
   Platform,
   View,
   StatusBar,
 } from 'react-native';
 import { ScrollView, RectButton } from 'react-native-gesture-handler';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons';
-import { QuestResults } from './types';
+import { DiagnosticStackNavProps } from './types';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Colors from '../../constants/Colors';
 
-const { height } = Dimensions.get('screen');
-
-function PositiveResults({ onShowQuest }) {
+function PositiveResults() {
   const navigation = useNavigation();
   return (
     <>
       <Text style={[styles.cardTitle, { color: '#79BC6A' }]}>SIN RIESGOS</Text>
       <Text style={styles.cardSubTitle}>
-        {`No contás con síntomas que puedan estar relacionados con el contagio de coronavirus, como así tampoco haber estado posiblemente expuesto a gente contagiada.\n\nTe proponemos repasar el listado de medidas preventivas para evitar el contagio y a compartir con otros esta información.`}
+        Tus síntomas no parecen estar relacionados con el contagio de
+        coronavirus.{`\n\n`}Te proponemos repasar el listado de medidas
+        preventivas para evitar el contagio y a compartir con otros esta
+        información.
       </Text>
       <RectButton
         style={[styles.button, styles.activeButton, { width: '80%' }]}
@@ -35,11 +34,12 @@ function PositiveResults({ onShowQuest }) {
         </Text>
       </RectButton>
       <Text style={styles.cardSubTitle}>
-        {`Si tus síntomas fueron cambiando, por favor volvé a realizar el autodiagnóstico y seguí las recomendaciones dadas.`}
+        Si tus síntomas fueron cambiando, por favor volvé a realizar el
+        autodiagnóstico y seguí las recomendaciones dadas.
       </Text>
       <RectButton
         style={[styles.button, styles.activeButton, { width: '80%' }]}
-        onPress={onShowQuest}
+        onPress={() => navigation.goBack()}
       >
         <Text style={[styles.buttonText, styles.activeButtonText]}>
           Realizar diagnóstico nuevamente
@@ -48,14 +48,19 @@ function PositiveResults({ onShowQuest }) {
     </>
   );
 }
-function NeutralResults({ onShowQuest }) {
+function NeutralResults() {
   const navigation = useNavigation();
   return (
     <>
-      <AntDesign name="meho" size={50} color="#EEC20B" />
-      <Text style={styles.cardTitle}>RIESGO MODERADO</Text>
+      <Text style={[styles.cardTitle, { color: '#EEC20B' }]}>
+        RIESGO MODERADO
+      </Text>
       <Text style={styles.cardSubTitle}>
-        {`Algunos de tus síntomas pueden estar asociados al contagio de coronavirus pero no son concluyentes para determinar si efectivamente estás infectado.\n\nTe proponemos repasar el listado de medidas preventivas para evitar el contagio y a compartir con otros esta información.`}
+        Algunos de tus síntomas pueden estar asociados al contagio de
+        coronavirus pero no son concluyentes para determinar si efectivamente
+        estás infectado.{`\n\n`}Te proponemos repasar el listado de medidas
+        preventivas para evitar el contagio y a compartir con otros esta
+        información.
       </Text>
       <RectButton
         style={[styles.button, styles.activeButton, { width: '80%' }]}
@@ -66,11 +71,12 @@ function NeutralResults({ onShowQuest }) {
         </Text>
       </RectButton>
       <Text style={styles.cardSubTitle}>
-        {`Si tus síntomas fueron cambiando, por favor volvé a realizar el autodiagnóstico y seguí las recomendaciones dadas.`}
+        Si tus síntomas fueron cambiando, por favor volvé a realizar el
+        autodiagnóstico y seguí las recomendaciones dadas.
       </Text>
       <RectButton
         style={[styles.button, styles.activeButton, { width: '80%' }]}
-        onPress={onShowQuest}
+        onPress={() => navigation.goBack()}
       >
         <Text style={[styles.buttonText, styles.activeButtonText]}>
           Realizar diagnóstico nuevamente
@@ -80,31 +86,17 @@ function NeutralResults({ onShowQuest }) {
   );
 }
 
-function NegativeResults({ onShowQuest }) {
+function NegativeResults() {
   const navigation = useNavigation();
   return (
     <>
       <Text style={[styles.cardTitle, { color: '#E50000' }]}>RIESGO ALTO</Text>
       <Text style={styles.cardSubTitle}>
-        Es muy posible que te hayas contagiado de coronavirus.{`\n\n`}Podés
-        llamar a alguno de los siguientes números de organismos oficiales para
-        que te cuenten cómo proceder y recibir asistencia médica y psicológica:
-        {`\n\n`}Ministerio de Salud en CABA: {`\n`}
-      </Text>
-      <Text
-        style={{ color: '#007AFF' }}
-        onPress={async () => {
-          try {
-            await Linking.openURL(`tel:148`);
-          } catch (e) {
-            Alert.alert('Error al intentar hacer la llamada');
-          }
-        }}
-      >
-        148
-      </Text>
-      <Text style={styles.cardSubTitle}>
-        Ministerio de Salud en Argentina: {`\n`}
+        Te aconsejamos consultar con un profesional de acuerdo a las
+        indicaciones en tu ciudad.{`\n\n`}Acá podés conseguir ayuda para
+        conseguir los números de organismos oficiales para que te orienten sobre
+        cómo proceder y recibir asistencia médica y psicológica.
+        {`\n\n`}Ministerio de Salud de la Nación:{`\n`}
       </Text>
       <Text
         style={{ color: '#007AFF' }}
@@ -116,22 +108,11 @@ function NegativeResults({ onShowQuest }) {
           }
         }}
       >
-        0800-222-1002
+        0800-222-1002 opción 1
       </Text>
       <Text style={styles.cardSubTitle}>
-        opción 1{`\n\n`}Gobierno de la Ciudad de Buenos Aires:{`\n`}
-      </Text>
-      <Text
-        style={{ color: '#007AFF' }}
-        onPress={async () => {
-          try {
-            await Linking.openURL(`tel:0800-222-1002`);
-          } catch (e) {
-            Alert.alert('Error al intentar hacer la llamada');
-          }
-        }}
-      >
-        107
+        Te proponemos repasar el listado de medidas preventivas para evitar el
+        contagio y a compartir con otros esta información.
       </Text>
       <RectButton
         style={[styles.button, styles.activeButton, { width: '80%' }]}
@@ -142,11 +123,12 @@ function NegativeResults({ onShowQuest }) {
         </Text>
       </RectButton>
       <Text style={styles.cardSubTitle}>
-        {`Si tus síntomas fueron cambiando, por favor volvé a realizar el autodiagnóstico y seguí las recomendaciones dadas.`}
+        Si tus síntomas fueron cambiando, por favor volvé a realizar el
+        autodiagnóstico y seguí las recomendaciones dadas.
       </Text>
       <RectButton
-        style={[styles.button, styles.activeButton]}
-        onPress={onShowQuest}
+        style={[styles.button, styles.activeButton, { width: '80%' }]}
+        onPress={() => navigation.goBack()}
       >
         <Text style={[styles.buttonText, styles.activeButtonText]}>
           Realizar diagnóstico nuevamente
@@ -156,34 +138,27 @@ function NegativeResults({ onShowQuest }) {
   );
 }
 
-export default function Results({ route, navigation }) {
+export default function Results({
+  route,
+}: DiagnosticStackNavProps<'DiagnosticResults'>) {
   const { results } = route.params;
 
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setBarStyle('dark-content');
-      // Platform.OS === 'android' &&
-      //   StatusBar.setBackgroundColor(Colors.primaryColor);
+      Platform.OS === 'android' &&
+        StatusBar.setBackgroundColor(Colors.secondaryTextColor);
     }, []),
   );
 
-  const onShowQuest = () => {
-    navigation.goBack();
-  };
   return (
     <SafeAreaView style={[styles.container]}>
       <StatusBar barStyle="dark-content" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
-          {results === 'positive' && (
-            <PositiveResults onShowQuest={onShowQuest} />
-          )}
-          {results === 'neutral' && (
-            <NeutralResults onShowQuest={onShowQuest} />
-          )}
-          {results === 'negative' && (
-            <NegativeResults onShowQuest={onShowQuest} />
-          )}
+          {results === 'positive' && <PositiveResults />}
+          {results === 'neutral' && <NeutralResults />}
+          {results === 'negative' && <NegativeResults />}
         </View>
       </ScrollView>
     </SafeAreaView>
