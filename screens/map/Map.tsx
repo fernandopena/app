@@ -6,9 +6,8 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons as Icon } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import * as Permissions from 'expo-permissions';
@@ -18,6 +17,9 @@ import MapView, {
   // MarkerAnimated,
   AnimatedRegion,
   Circle,
+  PROVIDER_DEFAULT,
+  // Heatmap,
+  // PROVIDER_GOOGLE,
   // Heatmap,
 } from 'react-native-maps';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -57,20 +59,28 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
 function PanelContent() {
   return (
     <View style={panelStyles.panel}>
-      <Text style={panelStyles.panelTitle}>San Francisco Airport</Text>
+      <View style={{ alignItems: 'center' }}>
+        <Text style={panelStyles.panelTitle}>Cuidado</Text>
+        <Icon name="ios-alert" size={50} color="#E50000" />
+      </View>
       <Text style={panelStyles.panelSubtitle}>
-        International Airport - 40 miles away
+        Encontramos registros de gente contagiada que circulo por tu area
       </Text>
-      <View style={panelStyles.panelButton}>
-        <Text style={panelStyles.panelButtonTitle}>Directions</Text>
-      </View>
-      <View style={panelStyles.panelButton}>
-        <Text style={panelStyles.panelButtonTitle}>Search Nearby</Text>
-      </View>
-      <Image
-        style={panelStyles.photo}
-        source={require('../../assets/images/airport-photo.jpg')}
-      />
+      <Text style={panelStyles.panelTitle}></Text>
+      <Text style={panelStyles.panelSubtitle}>
+        CoTrack utiliza tu ubicación para cruzar información de lugares y
+        trayectos donde hayas estado, con las ubicaciones aproximadas de otros
+        usuarios contagiados de coronavirus dentro de los últimos 14 días.
+        {`\n\n`}Las coordenadas y horarios de localización se guardan en tu
+        teléfono celular de manera encriptada. No hay ningún tipo de
+        identificación con la cual se relacione ni a vos ni a tu dispositivo
+        móvil con los datos de ubicación.{`\n\n`}La información de personas
+        infectadas es provista por entes gubernamentales y nadie más que un
+        organismo de salud puede certificar el contagio efectivo. El organismo
+        preguntará al paciente si acepta compartir su información de ubicación
+        de los últimos 14 días con motivo de ayudar a prevenir el contagio a
+        otros usuarios. Sin embargo el paciente podrá optar por no hacerlo.
+      </Text>
     </View>
   );
 }
@@ -109,12 +119,10 @@ const panelStyles = StyleSheet.create({
   },
   panelTitle: {
     fontSize: 27,
-    height: 35,
   },
   panelSubtitle: {
     fontSize: 14,
     color: 'gray',
-    height: 30,
     marginBottom: 10,
   },
   panelButton: {
@@ -152,14 +160,14 @@ export default function Map({ navigation }) {
 
   useEffect(() => {
     async function getLocationAsync() {
-      // let {
-      //   status,
-      //   permissions: {
-      //     location: { ios },
-      //   },
-      // } = await Permissions.askAsync(Permissions.LOCATION);
-      let { status, ios } = await Location.getPermissionsAsync();
-      console.log('getLocationAsync -> ios, status', ios, status);
+      let {
+        status,
+        permissions: {
+          location: { ios },
+        },
+      } = await Permissions.askAsync(Permissions.LOCATION);
+      // let { status, ios } = await Location.getPermissionsAsync();
+      // console.log('getLocationAsync -> ios, status', ios, status);
       if (status !== 'granted') {
         setError('El permiso para acceder a la ubicación fue denegado');
       } else if (Platform.OS === 'ios' && ios.scope !== 'always') {
@@ -230,7 +238,7 @@ export default function Map({ navigation }) {
       {location && (
         <MapView
           ref={mapRef}
-          // provider={PROVIDER_GOOGLE}
+          provider={PROVIDER_DEFAULT}
           showsUserLocation
           // followsUserLocation
           initialRegion={{
@@ -253,6 +261,39 @@ export default function Map({ navigation }) {
           />
           <Circle
             center={{
+              latitude: 40.721264,
+              longitude: -73.99923,
+            }}
+            radius={600}
+            fillColor="#EEC20BAA"
+            strokeColor="#EEC20BAA"
+            // zIndex={2}
+            strokeWidth={1}
+          />
+          <Circle
+            center={{
+              latitude: 40.711631,
+              longitude: -73.99923,
+            }}
+            radius={600}
+            fillColor="#BBCF4CAA"
+            strokeColor="#BBCF4CAA"
+            // zIndex={2}
+            strokeWidth={1}
+          />
+          <Circle
+            center={{
+              latitude: 40.713735,
+              longitude: -73.994234,
+            }}
+            radius={400}
+            fillColor="#EEC20BAA"
+            strokeColor="#EEC20BAA"
+            // zIndex={2}
+            strokeWidth={1}
+          />
+          <Circle
+            center={{
               latitude: 40.729301,
               longitude: -73.996745,
             }}
@@ -270,10 +311,25 @@ export default function Map({ navigation }) {
                 weight: 50,
               },
               {
-                latitude: 40.729301,
-                longitude: -73.996745,
-                weight: 90,
+                latitude: -34.612146,
+                longitude: -58.384734,
+                weight: 80,
               },
+              {
+                latitude: -34.609858,
+                longitude: -58.384788,
+                weight: 100,
+              },
+              {
+                latitude: -34.604476,
+                longitude: -58.374188,
+                weight: 60,
+              },
+              // {
+              //   latitude: 40.729301,
+              //   longitude: -73.996745,
+              //   weight: 90,
+              // },
             ]}
             radius={Platform.OS === 'ios' ? 150 : 50}
             // opacity={0.7}
@@ -292,7 +348,7 @@ export default function Map({ navigation }) {
           style={[styles.button, styles.locationButton]}
           onPress={() => navigation.navigate('MapInfo')}
         >
-          <Ionicons
+          <Icon
             name="md-information-circle-outline"
             size={24}
             color="rgba(66,135,244,1)"
@@ -309,16 +365,18 @@ export default function Map({ navigation }) {
             })
           }
         >
-          <Ionicons name="md-locate" size={24} color="rgba(66,135,244,1)" />
+          <Icon name="md-locate" size={24} color="rgba(66,135,244,1)" />
         </TouchableOpacity>
       </View>
-      <BottomSheet
-        ref={refRBSheet}
-        snapPoints={['50%', 50]}
-        renderContent={PanelContent}
-        renderHeader={PanelHeader}
-        initialSnap={1}
-      />
+      {location && (
+        <BottomSheet
+          ref={refRBSheet}
+          snapPoints={['40%', 50]}
+          renderContent={PanelContent}
+          renderHeader={PanelHeader}
+          initialSnap={1}
+        />
+      )}
     </View>
   );
 }
