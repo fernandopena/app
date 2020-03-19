@@ -173,10 +173,7 @@ export default function Results({ route, navigation }) {
   return (
     <SafeAreaView style={[styles.container]}>
       <StatusBar barStyle="dark-content" />
-      <ScrollView
-        contentContainerStyle={[styles.container]}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           {results === 'positive' && (
             <PositiveResults onShowQuest={onShowQuest} />
@@ -188,28 +185,6 @@ export default function Results({ route, navigation }) {
             <NegativeResults onShowQuest={onShowQuest} />
           )}
         </View>
-        {/* <Animated.Text
-        style={[
-          styles.cardTitle,
-          {
-            opacity: translateY.interpolate({
-              inputRange: [0, height],
-              outputRange: [1, 0],
-            }),
-          },
-        ]}
-      >
-        Resultado
-      </Animated.Text>
-      <Animated.View style={[styles.card, { transform: [{ translateY }] }]}>
-        {results === 'positive' && (
-          <PositiveResults onShowQuest={onShowQuest} />
-        )}
-        {results === 'neutral' && <NeutralResults onShowQuest={onShowQuest} />}
-        {results === 'negative' && (
-          <NegativeResults onShowQuest={onShowQuest} />
-        )}
-      </Animated.View> */}
       </ScrollView>
     </SafeAreaView>
   );
