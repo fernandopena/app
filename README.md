@@ -4,6 +4,8 @@ El objetivo es armar un App + Web que permita disminuir la tasa de contagio a tr
 
 Están surgiendo múltiples iniciativas en simultaneo, tenemos que ser organizados y abiertos para poder construir lo más útil posible entre todos.
 
+** Ya quedó viejo el detalle, apenas tengamos un respiro actualizamos **
+
 #### APP
 
 La App debe ser simple. No requiere registro, solamente descarga y permiso de acceso a servicios de ubicación.
