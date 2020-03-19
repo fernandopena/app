@@ -6,6 +6,7 @@ import {
 } from 'react-native-gesture-handler';
 import Layout from '../../constants/Layout';
 import { PreventionItem, PreventionStackNavProps } from './types';
+import { SharedElement } from 'react-navigation-shared-element';
 
 const data: PreventionItem[] = [
   {
@@ -87,7 +88,13 @@ export default function Prevention({
         }
       >
         <View style={styles.card}>
-          <Image source={item.image} style={styles.cardImage} />
+          <SharedElement id={item.id}>
+            <Image
+              source={item.image}
+              style={styles.cardImage}
+              resizeMode="cover"
+            />
+          </SharedElement>
           <Text style={styles.cardTitle}>{item.title}</Text>
           <Text style={styles.cardText}>{item.shortText}</Text>
         </View>
@@ -134,7 +141,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  cardImage: { width: 150, height: 150, resizeMode: 'cover' },
+  cardImage: { width: 100, height: 100, alignSelf: 'center' },
   cardTitle: {
     fontSize: 14,
     fontWeight: '700',

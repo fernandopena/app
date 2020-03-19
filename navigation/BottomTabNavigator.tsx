@@ -6,6 +6,7 @@ import {
   createStackNavigator,
   TransitionPresets,
 } from '@react-navigation/stack';
+import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 
 import TabBarIcon from '../components/TabBarIcon';
 import Diagnostic from '../screens/diagnostic/Diagnostic';
@@ -15,6 +16,8 @@ import PreventionDetail from '../screens/prevention/PreventionDetail';
 import Colors from '../constants/Colors';
 import { PreventionParamsList } from '../screens/prevention/types';
 import Results from '../screens/diagnostic/Results';
+import { TransitionSpec } from '@react-navigation/stack/lib/typescript/src/types';
+import { DiagnosticParamsList } from '../screens/diagnostic/types';
 
 const INITIAL_ROUTE_NAME = 'Map';
 const isIOS = Platform.OS === 'ios';
@@ -27,14 +30,28 @@ type TabsParamsList = {
 
 const Tab = createBottomTabNavigator<TabsParamsList>();
 
-const DiagnosticStack = createStackNavigator();
+const DiagnosticStack = createStackNavigator<DiagnosticParamsList>();
 
 const defaultScreenOptions = {
   headerTintColor: Colors.secondaryTextColor,
   headerStyle: { backgroundColor: Colors.primaryColor },
 };
 
-const PreventionStack = createStackNavigator<PreventionParamsList>();
+const iosTransitionSpec: TransitionSpec = {
+  animation: 'spring',
+  config: {
+    stiffness: 1000,
+    damping: 500,
+    mass: 3,
+    overshootClamping: true,
+    restDisplacementThreshold: 10,
+    restSpeedThreshold: 10,
+  },
+};
+
+const PreventionStack = createSharedElementStackNavigator<
+  PreventionParamsList
+>();
 
 function PreventionNavStack() {
   useFocusEffect(
@@ -45,7 +62,15 @@ function PreventionNavStack() {
     }, []),
   );
   return (
-    <PreventionStack.Navigator screenOptions={defaultScreenOptions}>
+    <PreventionStack.Navigator
+      screenOptions={{
+        ...defaultScreenOptions,
+        transitionSpec: {
+          open: iosTransitionSpec,
+          close: iosTransitionSpec,
+        },
+      }}
+    >
       <PreventionStack.Screen
         name="Prevention"
         component={Prevention}
@@ -55,6 +80,10 @@ function PreventionNavStack() {
         name="PreventionDetail"
         component={PreventionDetail}
         options={{ headerTitle: '' }}
+        sharedElementsConfig={route => {
+          const { item } = route.params;
+          return [{ id: item.id }];
+        }}
       />
     </PreventionStack.Navigator>
   );
