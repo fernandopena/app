@@ -43,6 +43,7 @@ export default function App(props) {
         });
 
         const preventionImages = [
+          require('./assets/images/logo.png'),
           require('./assets/images/prevention/coronavirus.png'),
           require('./assets/images/prevention/fever.png'),
           require('./assets/images/prevention/spread.png'),

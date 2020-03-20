@@ -3,6 +3,7 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { StyleSheet, View, Image, Text } from 'react-native';
 import { savePreferences } from '../../utils/config';
 import { useNavigation } from '@react-navigation/native';
+import Colors from '../../constants/Colors';
 
 const slides = [
   {
@@ -51,8 +52,19 @@ export const OnboardingSlides: React.FC<OnboardingSlidesProps> = ({
     return (
       <View style={[styles.slide, { backgroundColor: item.backgroundColor }]}>
         {/* <Text style={styles.title}>{item.title}</Text> */}
-        <Image source={item.image} />
-        <Text style={styles.text}>{item.text}</Text>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Image
+            source={require('../../assets/images/logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={{ flex: 2, alignItems: 'center' }}>
+          <Image source={item.image} style={styles.image} />
+          <Text style={styles.text}>{item.text}</Text>
+        </View>
       </View>
     );
   };
@@ -68,8 +80,9 @@ export const OnboardingSlides: React.FC<OnboardingSlidesProps> = ({
       doneLabel="Finalizar"
       renderItem={renderItem}
       showPrevButton
-      buttonTextStyle={{ color: '#59b2ab' }}
-      activeDotStyle={{ backgroundColor: '#59b2ab' }}
+      // @ts-ignore
+      buttonTextStyle={styles.buttonText}
+      activeDotStyle={styles.activeDot}
       slides={slides}
       onDone={handleDone}
     />
@@ -80,17 +93,28 @@ const styles = StyleSheet.create({
   slide: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  logo: {
+    width: 150,
+    height: 150,
   },
   image: {
-    width: 320,
-    height: 320,
+    width: 256,
+    height: 256,
   },
   text: {
-    color: 'rgba(0,0,0,0.9)',
+    fontSize: 16,
     backgroundColor: 'transparent',
     textAlign: 'center',
-    paddingHorizontal: 20,
+    padding: 20,
     fontWeight: '200',
+  },
+  buttonText: {
+    color: Colors.primaryColor,
+  },
+  activeDot: {
+    backgroundColor: Colors.primaryColor,
   },
 });
