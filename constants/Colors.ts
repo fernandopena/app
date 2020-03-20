@@ -1,4 +1,4 @@
-const primaryColor = '#29C097';
+const primaryColor = '#75AADB';
 
 export default {
   primaryColor,
