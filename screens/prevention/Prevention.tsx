@@ -15,7 +15,7 @@ const data: PreventionItem[] = [
     shortText:
       'También llamado COVID-19, es una enfermedad infecciosa causada por un nuevo virus que no había sido detectado en humanos hasta la fecha.',
     longText:
-      'También llamado COVID-19, es una enfermedad infecciosa causada por un nuevo virus que no había sido detectado en humanos hasta la fecha.\nEl virus causa una complicación respiratoria como la gripe, similar a la Influenza, junto con diversos síntomas, que en casos graves pueden producir neumonía e incluso, la muerte.',
+      'También llamado COVID-19, es una enfermedad infecciosa causada por un nuevo virus que no había sido detectado en humanos hasta la fecha.\n\nEl virus causa una complicación respiratoria como la gripe, similar a la Influenza, junto con diversos síntomas, que en casos graves pueden producir neumonía e incluso, la muerte.',
     image: require('../../assets/images/prevention/coronavirus.png'),
   },
   {
@@ -24,7 +24,7 @@ const data: PreventionItem[] = [
     shortText:
       'Los síntomas más comunes del contagio de coronavirus son fiebre, tos y dolor de garganta.',
     longText:
-      'Los síntomas más comunes del contagio de coronavirus son fiebre, tos y dolor de garganta.\nEn algunos casos puede provocar dificultades respiratorias severas, requiriendo hospitalización.',
+      'Los síntomas más comunes del contagio de coronavirus son fiebre, tos y dolor de garganta.\n\nEn algunos casos puede provocar dificultades respiratorias severas, requiriendo hospitalización.',
     image: require('../../assets/images/prevention/fever.png'),
   },
   {
@@ -33,7 +33,7 @@ const data: PreventionItem[] = [
     shortText:
       'La principal vía para la diseminación del virus es la exposición ante una persona infectada mediante el estornudo o tos y también por la circulación de objetos contaminados, donde el virus permanece un tiempo variable según su material.',
     longText:
-      'La principal vía para la diseminación del virus es la exposición ante una persona infectada mediante el estornudo o tos y también por la circulación de objetos contaminados, donde el virus permanece un tiempo variable según su material.\nEstas pequeñas partículas pueden llegar a la boca o la nariz de las personas que se encuentren en contacto o posiblemente entrar a los pulmones al respirar.',
+      'La principal vía para la diseminación del virus es la exposición ante una persona infectada mediante el estornudo o tos y también por la circulación de objetos contaminados, donde el virus permanece un tiempo variable según su material.\n\nEstas pequeñas partículas pueden llegar a la boca o la nariz de las personas que se encuentren en contacto o posiblemente entrar a los pulmones al respirar.',
     image: require('../../assets/images/prevention/spread.png'),
   },
   {
@@ -42,7 +42,7 @@ const data: PreventionItem[] = [
     shortText:
       'La principal vía de contagio es a través de las manos, tocando un objeto contaminado y llevándose las manos a la boca y ojos.',
     longText:
-      'La principal vía de contagio es a través de las manos, tocando un objeto contaminado y llevándose las manos a la boca y ojos.\nEsta epidemia requiere que colaboremos con medidas simples, que apuntan a disminuir la probabilidad de contagio entre las personas.\n\nSEPARACIÓN SOCIAL: Tratá de mantener siempre una distancia mayor a 1 metro con los demás.\nCONTACTO CORPORAL: Evitá tocar las manos o la cara para saludar o interactuar con otras personas.\nAGLOMERACIONES: Evitá concurrir a lugares donde puedas estar en contacto con más de 20 personas.\nAUTO AISLAMIENTO: El auto aislamiento, o cuarentena voluntaria, ayuda a que el sistema de salud no colapse si en caso de contagio múltiple, se deba atender a varias personas a la vez.\nSi tenés síntomas de gripe quedate en tu casa, no concurras a tu trabajo o a lugares públicos. Consultá a las líneas de atención profesional para saber cómo proceder.',
+      'La principal vía de contagio es a través de las manos, tocando un objeto contaminado y llevándose las manos a la boca y ojos.\n\nEsta epidemia requiere que colaboremos con medidas simples, que apuntan a disminuir la probabilidad de contagio entre las personas.\n\nSEPARACIÓN SOCIAL: Tratá de mantener siempre una distancia mayor a 1 metro con los demás.\n\nCONTACTO CORPORAL: Evitá tocar las manos o la cara para saludar o interactuar con otras personas.\n\nAGLOMERACIONES: Evitá concurrir a lugares donde puedas estar en contacto con más de 20 personas.\n\nAUTO AISLAMIENTO: El auto aislamiento, o cuarentena voluntaria, ayuda a que el sistema de salud no colapse si en caso de contagio múltiple, se deba atender a varias personas a la vez.\n\nSi tenés síntomas de gripe quedate en tu casa, no concurras a tu trabajo o a lugares públicos. Consultá a las líneas de atención profesional para saber cómo proceder.',
     image: require('../../assets/images/prevention/transmission.png'),
   },
   {
