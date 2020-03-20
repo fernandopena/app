@@ -346,10 +346,12 @@ export default function Map({ navigation }) {
         <TouchableOpacity
           activeOpacity={0.8}
           style={[styles.button, styles.locationButton]}
-          onPress={() => navigation.navigate('MapInfo')}
+          // onPress={() => navigation.navigate('MapInfo')}
+          onPress={() => navigation.navigate('Help')}
         >
           <Icon
-            name="md-information-circle-outline"
+            // name="md-information-circle-outline"
+            name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-help-circle-outline`}
             size={24}
             color="rgba(66,135,244,1)"
           />
@@ -365,7 +367,7 @@ export default function Map({ navigation }) {
             })
           }
         >
-          <Icon name="md-locate" size={24} color="rgba(66,135,244,1)" />
+          <Icon name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-locate`} size={24} color="rgba(66,135,244,1)" />
         </TouchableOpacity>
       </View>
       {location && (

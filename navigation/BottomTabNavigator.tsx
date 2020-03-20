@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   createStackNavigator,
   TransitionPresets,
 } from '@react-navigation/stack';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
+import { Ionicons as Icon } from '@expo/vector-icons';
 
 import TabBarIcon from '../components/TabBarIcon';
 import Diagnostic from '../screens/diagnostic/Diagnostic';
@@ -18,6 +19,7 @@ import { PreventionParamsList } from '../screens/prevention/types';
 import Results from '../screens/diagnostic/Results';
 import { TransitionSpec } from '@react-navigation/stack/lib/typescript/src/types';
 import { DiagnosticParamsList } from '../screens/diagnostic/types';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const INITIAL_ROUTE_NAME = 'Map';
 const isIOS = Platform.OS === 'ios';
@@ -53,6 +55,21 @@ const PreventionStack = createSharedElementStackNavigator<
   PreventionParamsList
 >();
 
+function HelpButton() {
+  const navigation = useNavigation();
+  return (
+    <TouchableWithoutFeedback onPress={() => navigation.navigate('Help')}>
+      <Icon
+        name="ios-help-circle-outline"
+        size={30}
+        color="#fff"
+        // backgroundColor={Colors.primaryColor}
+        style={{ paddingRight: 20 }}
+      />
+    </TouchableWithoutFeedback>
+  );
+}
+
 function PreventionNavStack() {
   useFocusEffect(
     React.useCallback(() => {
@@ -74,7 +91,10 @@ function PreventionNavStack() {
       <PreventionStack.Screen
         name="Prevention"
         component={Prevention}
-        options={{ headerTitle: 'Prevención' }}
+        options={{
+          headerTitle: 'Prevención',
+          headerRight: () => <HelpButton />,
+        }}
       />
       <PreventionStack.Screen
         name="PreventionDetail"
@@ -109,7 +129,10 @@ function DiagnosticNavStack() {
     >
       <DiagnosticStack.Screen
         name="Diagnostic"
-        options={{ headerTitle: 'Auto Diagnóstico' }}
+        options={{
+          headerTitle: 'Auto Diagnóstico',
+          headerRight: () => <HelpButton />,
+        }}
         component={Diagnostic}
       />
       <DiagnosticStack.Screen
@@ -147,7 +170,6 @@ export default function BottomTabNavigator() {
           tabBarIcon: ({ focused }) => (
             <TabBarIcon focused={focused} name={isIOS ? 'ios-map' : 'md-map'} />
           ),
-          // tabBarVisible: false,
         }}
         component={MapStack}
       />
@@ -164,19 +186,6 @@ export default function BottomTabNavigator() {
         }}
         component={PreventionNavStack}
       />
-      {/* <Tab.Screen
-        name="Data"
-        options={{
-          title: 'Datos',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              focused={focused}
-              name={isIOS ? 'ios-archive' : 'md-archive'}
-            />
-          ),
-        }}
-        component={Diagnostic}
-      /> */}
     </Tab.Navigator>
   );
 }

@@ -12,46 +12,11 @@ import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
-import AppIntroSlider from 'react-native-app-intro-slider';
 
 import useLinking from './navigation/useLinking';
-import BottomTabNavigator from './navigation/BottomTabNavigator';
-import { getPreferences, savePreferences } from './utils/config';
-
-const slides = [
-  {
-    key: 'somethun',
-    title: 'Title 1',
-    text:
-      'CoTrack necesita saber tu ubicación para avisarte en tiempo real si en tu recorrido estuviste en contacto cercano con alguna persona contagiada',
-    image: require('./assets/images/prevention/spread.png'),
-    backgroundColor: '#e1bb3f',
-  },
-  {
-    key: 'somethun-dos',
-    title: 'Title 2',
-    text:
-      'Si presentás síntomas o creés haber estado en contacto con alguien infectado, CoTrack te puede ayudar a realizar un diagnóstico y aconsejarte qué hacer según el resultado',
-    image: require('./assets/images/prevention/fever.png'),
-    backgroundColor: '#59b2ab',
-  },
-  {
-    key: 'somethun3',
-    title: 'Rocket guy',
-    text:
-      'CoTrack te brinda información completa y confiable para ayudar a prevenir la infección, medidas para resguardarse e información útil y actualizada',
-    image: require('./assets/images/prevention/washing.png'),
-    backgroundColor: '#22bcb5',
-  },
-  {
-    key: 'somethun4',
-    title: 'Rocket guy',
-    text:
-      'CoTrack no envía datos privados ni requiere que te identifiques, tan sólo saber tu ubicación, la cual también podés decidir si compartirla o no en caso de contagio',
-    image: require('./assets/images/prevention/warning.png'),
-    backgroundColor: '#bb6767',
-  },
-];
+import { getPreferences } from './utils/config';
+import { OnboardingSlides } from './screens/onboaring/OnboardingSlides';
+import MainNavigator from './navigation/MainNavigator';
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -109,18 +74,7 @@ export default function App(props) {
     loadResourcesAndDataAsync();
   }, []);
 
-  const renderItem = ({ item }) => {
-    return (
-      <View style={[styles.slide, { backgroundColor: item.backgroundColor }]}>
-        {/* <Text style={styles.title}>{item.title}</Text> */}
-        <Image source={item.image} />
-        <Text style={styles.text}>{item.text}</Text>
-      </View>
-    );
-  };
-
   const onDone = async () => {
-    await savePreferences({ showOnboarding: false });
     setShowOnboarding(false);
   };
 
@@ -131,20 +85,13 @@ export default function App(props) {
       <View style={styles.container}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         {showOnboarding ? (
-          <AppIntroSlider
-            nextLabel="Siguiente"
-            prevLabel="Anterior"
-            doneLabel="Finalizar"
-            renderItem={renderItem}
-            slides={slides}
-            onDone={onDone}
-          />
+          <OnboardingSlides onDone={onDone} />
         ) : (
           <NavigationContainer
             ref={containerRef}
             initialState={initialNavigationState}
           >
-            <BottomTabNavigator />
+            <MainNavigator />
           </NavigationContainer>
         )}
       </View>
@@ -167,10 +114,11 @@ const styles = StyleSheet.create({
     height: 320,
   },
   text: {
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: 'rgba(0,0,0,0.9)',
     backgroundColor: 'transparent',
     textAlign: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    fontWeight: '200',
   },
   title: {
     fontSize: 22,
