@@ -7,11 +7,11 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
-import { RectButton } from 'react-native-gesture-handler';
 
 import { QuestResults } from './types';
 import { useScrollToTop } from '@react-navigation/native';
 import Colors from '../../constants/Colors';
+import Touchable from '../../components/Touchable';
 
 const initialState = {
   symptoms: new Map(),
@@ -35,14 +35,14 @@ function QuestButton({ id, text, onPress, selected }) {
   };
 
   return (
-    <RectButton
+    <Touchable
       style={[styles.button, isSelected && styles.activeButton]}
       onPress={handlePress}
     >
       <Text style={[styles.buttonText, isSelected && styles.activeButtonText]}>
         {text}
       </Text>
-    </RectButton>
+    </Touchable>
   );
 }
 
@@ -58,22 +58,22 @@ function YesNoButtons({ id, onPress, state }) {
   };
   return (
     <>
-      <RectButton
+      <Touchable
         style={[styles.button, isYes && styles.activeButton]}
         onPress={handleYesPress}
       >
         <Text style={[styles.buttonText, isYes && styles.activeButtonText]}>
           Si
         </Text>
-      </RectButton>
-      <RectButton
+      </Touchable>
+      <Touchable
         style={[styles.button, isNo && styles.activeButton]}
         onPress={handleNoPress}
       >
         <Text style={[styles.buttonText, isNo && styles.activeButtonText]}>
           No
         </Text>
-      </RectButton>
+      </Touchable>
     </>
   );
 }
@@ -261,7 +261,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
           <YesNoButtons id="pathology" onPress={setState} state={state} />
         </View>
       </ScrollView>
-      <RectButton
+      <Touchable
         enabled={!disabled}
         style={[
           styles.button,
@@ -274,7 +274,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
         <Text style={[styles.buttonText, styles.activeButtonText]}>
           REALIZAR DIAGNÓSTICO
         </Text>
-      </RectButton>
+      </Touchable>
     </>
   );
 }
@@ -296,6 +296,7 @@ export default function Diagnostic({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   questContainer: {
     paddingHorizontal: 20,
@@ -330,11 +331,11 @@ const styles = StyleSheet.create({
           width: 0,
           height: 1,
         },
-        shadowOpacity: 0.18,
-        shadowRadius: 1.0,
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
       },
       android: {
-        elevation: 1,
+        elevation: 3,
       },
     }),
   },
