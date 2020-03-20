@@ -39,34 +39,36 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 // const OVERLAY_TOP_LEFT_COORDINATE = [35.68184060244454, 139.76531982421875];
 // const OVERLAY_BOTTOM_RIGHT_COORDINATE = [35.679609609368576, 139.76806640625];
 
-TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
-  if (error) {
-    console.log('error', error);
-    // check `error.message` for more details.
-    return;
-  }
-  if (data) {
-    const { locations } = data as any;
-    // console.log("locations", locations);
-    const { latitude, longitude } = locations[0].coords;
-    locationService.setLocation({
-      latitude,
-      longitude,
-    });
-  }
-});
+// TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+//   if (error) {
+//     console.log('error', error);
+//     // check `error.message` for more details.
+//     return;
+//   }
+//   if (data) {
+//     const { locations } = data as any;
+//     // console.log("locations", locations);
+//     const { latitude, longitude } = locations[0].coords;
+//     locationService.setLocation({
+//       latitude,
+//       longitude,
+//     });
+//   }
+// });
 
 function PanelContent() {
   return (
     <View style={panelStyles.panel}>
-      <View style={{ alignItems: 'center' }}>
-        <Text style={panelStyles.panelTitle}>Cuidado</Text>
-        <Icon name="ios-alert" size={50} color="#E50000" />
+      <View style={{ paddingBottom: 20 }}>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={panelStyles.panelTitle}>RECOPILANDO INFORMACIÓN</Text>
+          {/* <Icon name="ios-alert" size={50} color="#E50000" /> */}
+        </View>
+        <Text style={panelStyles.panelSubtitle}>
+          La aplicación se irá actualizando con los datos de ubicación y
+          recorridos de personas confirmadas con el contagio
+        </Text>
       </View>
-      <Text style={panelStyles.panelSubtitle}>
-        Encontramos registros de gente contagiada que circulo por tu area
-      </Text>
-      <Text style={panelStyles.panelTitle}></Text>
       <Text style={panelStyles.panelSubtitle}>
         CoTrack utiliza tu ubicación para cruzar información de lugares y
         trayectos donde hayas estado, con las ubicaciones aproximadas de otros
@@ -118,7 +120,8 @@ const panelStyles = StyleSheet.create({
     marginBottom: 10,
   },
   panelTitle: {
-    fontSize: 27,
+    fontSize: 20,
+    paddingBottom: 10,
   },
   panelSubtitle: {
     fontSize: 14,
@@ -177,11 +180,11 @@ export default function Map({ navigation }) {
       } else {
         try {
           let location = await Location.getCurrentPositionAsync({});
-          await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-            accuracy: Location.Accuracy.Balanced,
-            // distanceInterval: 50
-            // deferredUpdatesDistance: 1000
-          });
+          // await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+          //   accuracy: Location.Accuracy.Balanced,
+          //   // distanceInterval: 50
+          //   // deferredUpdatesDistance: 1000
+          // });
           setLocation(location);
           const newCoordinate = {
             latitude: location.coords.latitude,
@@ -220,10 +223,10 @@ export default function Map({ navigation }) {
     getLocationAsync();
 
     locationService.subscribe(onLocationUpdate);
-    return async () => {
-      console.log('stopLocationUpdatesAsync');
-      await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
-    };
+    // return async () => {
+    //   // console.log('stopLocationUpdatesAsync');
+    //   // await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+    // };
   }, []);
 
   let text = 'Cargando..';
@@ -251,7 +254,7 @@ export default function Map({ navigation }) {
           style={styles.map}
           showsMyLocationButton={false}
         >
-          <Circle
+          {/* <Circle
             center={location.coords}
             radius={700}
             fillColor="rgba(0, 200, 0, 0.5)"
@@ -302,7 +305,7 @@ export default function Map({ navigation }) {
             strokeColor="rgba(255, 142, 0, 0.5)"
             // zIndex={2}
             strokeWidth={1}
-          />
+          /> */}
           {/* <Heatmap
             points={[
               {
@@ -367,13 +370,17 @@ export default function Map({ navigation }) {
             })
           }
         >
-          <Icon name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-locate`} size={24} color="rgba(66,135,244,1)" />
+          <Icon
+            name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-locate`}
+            size={24}
+            color="rgba(66,135,244,1)"
+          />
         </TouchableOpacity>
       </View>
       {location && (
         <BottomSheet
           ref={refRBSheet}
-          snapPoints={['40%', 50]}
+          snapPoints={['40%', 150, 50]}
           renderContent={PanelContent}
           renderHeader={PanelHeader}
           initialSnap={1}
