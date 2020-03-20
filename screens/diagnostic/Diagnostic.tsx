@@ -5,25 +5,22 @@ import {
   View,
   Platform,
   ScrollView,
-  TextInput,
   StatusBar,
 } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 
 import { QuestResults } from './types';
 import { useScrollToTop } from '@react-navigation/native';
-import { useDebounce } from '../../hooks/use-debounce';
+import Colors from '../../constants/Colors';
 
 const initialState = {
   symptoms: new Map(),
   travel: undefined,
   confirmedContact: undefined,
   suspectedContact: undefined,
-  age: undefined,
   pregnant: undefined,
-  outOfBreath: undefined,
-  newBorn: undefined,
-  illness: new Map(),
+  elder: undefined,
+  pathology: undefined,
 };
 
 function reducer(state, newState) {
@@ -88,7 +85,6 @@ interface QuestionaryProps {
 function Questionary({ onShowResults }: QuestionaryProps) {
   const [state, setState] = useReducer(reducer, initialState);
   const [disabled, setDisabled] = useState(true);
-  const [showAge, setShowAge] = useState(false);
 
   const onSelectSymptoms = useCallback(
     id => {
@@ -100,18 +96,6 @@ function Questionary({ onShowResults }: QuestionaryProps) {
     [state.symptoms],
   );
 
-  const onSelectIllness = useCallback(
-    id => {
-      const newSelected = new Map(state.illness);
-      newSelected.set(id, !state.illness.get(id));
-
-      setState({ illness: newSelected });
-    },
-    [state.illness],
-  );
-
-  const debouncedState = useDebounce(state, 300);
-
   useEffect(() => {
     const hasSymptoms =
       state.symptoms.size > 0 &&
@@ -122,28 +106,22 @@ function Questionary({ onShowResults }: QuestionaryProps) {
       state?.travel &&
       state?.confirmedContact &&
       state?.suspectedContact &&
-      state?.outOfBreath &&
+      state?.elder &&
       state?.pregnant &&
-      (state.age > 0 || state?.newBorn === 'yes')
+      state?.pathology
     ) {
       setDisabled(false);
     } else {
       setDisabled(true);
     }
-  }, [debouncedState]);
+  }, [state]);
 
   const handlePress = () => {
     function hasExtraConditions() {
-      const hasIllness =
-        state.illness.size > 0 &&
-        Array.from(state.illness).find((s: [string, boolean]) => s[1]);
-
-      state.age >= 60 || state.pregnant === 'yes' || !!hasIllness;
       if (
-        state.age >= 60 ||
-        state.newBorn === 'yes' ||
+        state.elder === 'yes' ||
         state.pregnant === 'yes' ||
-        !!hasIllness
+        state.pathology === 'yes'
       ) {
         onShowResults('negative');
       } else {
@@ -152,12 +130,11 @@ function Questionary({ onShowResults }: QuestionaryProps) {
     }
     if (
       state.symptoms.get('fever') &&
-      state.symptoms.get('breath') &&
       state.travel === 'yes' &&
       state.confirmedContact === 'yes' &&
       state.suspectedContact === 'yes'
     ) {
-      if (state.outOfBreath === 'yes') {
+      if (state.symptoms.get('breath')) {
         onShowResults('negative');
       } else {
         hasExtraConditions();
@@ -166,7 +143,6 @@ function Questionary({ onShowResults }: QuestionaryProps) {
       onShowResults('positive');
     }
 
-    setState(initialState);
     scrollRef.current.scrollTo({ x: 0, animated: false });
   };
 
@@ -182,25 +158,15 @@ function Questionary({ onShowResults }: QuestionaryProps) {
         ref={scrollRef}
       >
         <Text style={styles.title}>
-          Si tenés algún malestar y pensás que puede estar ligado a la infección
-          de coronavirus, aquí te haremos un par de preguntas pidiendo que
-          detalles los síntomas que estás teniendo y también saber si creés
-          haber estado en contacto con alguien infectado.
+          Si tenés algún malestar y pensás que puede estar ligado al contagio de
+          coronavirus, podemos realizar un{' '}
+          <Text style={{ fontWeight: '700' }}>
+            auto-diagnóstico de detección temprana
+          </Text>{' '}
+          respondiendo una serie de preguntas, detallando los síntomas que estás
+          teniendo y si creés haber estado en contacto con alguien infectado.
         </Text>
-        <Text style={styles.subtitle}>¿Recien Nacido?</Text>
-        <View style={styles.questButtons}>
-          <YesNoButtons id="newBorn" onPress={setState} state={state} />
-        </View>
-        {state.newBorn === 'no' && (
-          <TextInput
-            placeholder="Edad"
-            onChangeText={text => setState({ age: text })}
-            value={state.age}
-            keyboardType="number-pad"
-            style={styles.input}
-          />
-        )}
-        <Text style={styles.subtitle}>Dolencias y síntomas</Text>
+        <Text style={styles.section}>Dolencias y síntomas</Text>
         <View style={styles.questButtons}>
           <QuestButton
             id="fever"
@@ -245,7 +211,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
             selected={state.symptoms}
           />
         </View>
-        <Text style={styles.subtitle}>Contacto cercano</Text>
+        <Text style={styles.section}>Contacto cercano</Text>
         <Text style={styles.subtitle}>
           ¿Volviste de viaje de algún país con algún caso confirmado de
           coronavirus?
@@ -254,8 +220,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
           <YesNoButtons id="travel" onPress={setState} state={state} />
         </View>
         <Text style={styles.subtitle}>
-          ¿Tuviste contacto con alguien que haya sido confirmado como
-          contagiado?
+          ¿Tuviste contacto estrecho con alguien con diagnóstico confirmado?
         </Text>
         <View style={styles.questButtons}>
           <YesNoButtons
@@ -265,7 +230,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
           />
         </View>
         <Text style={styles.subtitle}>
-          ¿Tuviste contacto con alguien que sospeches se haya contagiado?
+          ¿Conviviste con alguien que sea caso sospechoso o confirmado?
         </Text>
         <View style={styles.questButtons}>
           <YesNoButtons
@@ -274,67 +239,27 @@ function Questionary({ onShowResults }: QuestionaryProps) {
             state={state}
           />
         </View>
-        <Text style={styles.subtitle}>¿Te falta el aire?</Text>
+        <Text style={styles.section}>Situación actual y antecedentes</Text>
+        <Text style={styles.subtitle}>¿Tenés 60 años o más?</Text>
         <View style={styles.questButtons}>
-          <YesNoButtons id="outOfBreath" onPress={setState} state={state} />
+          <YesNoButtons id="elder" onPress={setState} state={state} />
         </View>
-        <Text style={styles.subtitle}>¿Estas embarazada?</Text>
+        <Text style={styles.subtitle}>
+          ¿Estás embarazada o en contacto con un recién nacido?
+        </Text>
         <View style={styles.questButtons}>
           <YesNoButtons id="pregnant" onPress={setState} state={state} />
         </View>
-        <Text style={styles.subtitle}>Antecedentes médicos</Text>
+        <Text style={styles.subtitle}>
+          ¿Sufrís alguna de las siguientes patologías?{`\n\n`} - Cáncer
+          {`\n`} - Colesterol alto {`\n`} - Diabetes {`\n`} - Enfermedades
+          cardiovasculares {`\n`} - Enfermedades respiratorias {`\n`} -
+          Esclerosis múltiple
+          {`\n`} - Hipertensión arterial {`\n`} - Hipo o hipertiroidismo
+        </Text>
         <View style={styles.questButtons}>
-          <QuestButton
-            id="cancer"
-            text="Cáncer"
-            onPress={onSelectIllness}
-            selected={state.illness}
-          />
-          <QuestButton
-            id="cholesterol"
-            text="Colesterol"
-            onPress={onSelectIllness}
-            selected={state.illness}
-          />
-          <QuestButton
-            id="diabetes"
-            text="Diabetes"
-            onPress={onSelectIllness}
-            selected={state.illness}
-          />
-          <QuestButton
-            id="cardio"
-            text="Enfermedades cardiovasculares"
-            onPress={onSelectIllness}
-            selected={state.illness}
-          />
-          <QuestButton
-            id="respiratory"
-            text="Enfermedades respiratorias"
-            onPress={onSelectIllness}
-            selected={state.illness}
-          />
-          <QuestButton
-            id="ms"
-            text="Esclerosis múltiple"
-            onPress={onSelectIllness}
-            selected={state.illness}
-          />
-          <QuestButton
-            id="hypertension"
-            text="Hipertensión arterial"
-            onPress={onSelectIllness}
-            selected={state.illness}
-          />
-          <QuestButton
-            id="hyperthyroidism"
-            text="Hipotiroidismo o hipertiroidismo"
-            onPress={onSelectIllness}
-            selected={state.illness}
-          />
+          <YesNoButtons id="pathology" onPress={setState} state={state} />
         </View>
-        {/* </ReAnimated.View> */}
-        {/* </KeyboardAvoidingView> */}
       </ScrollView>
       <RectButton
         enabled={!disabled}
@@ -381,7 +306,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  title: { paddingTop: 20 },
+  title: { paddingTop: 20, fontSize: 16, fontWeight: '300' },
+  section: {
+    paddingTop: 20,
+    paddingBottom: 10,
+    fontSize: 15,
+    fontWeight: '700',
+  },
   subtitle: { paddingTop: 20, paddingBottom: 10 },
   button: {
     flexDirection: 'row',
@@ -415,36 +346,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   activeButton: {
-    backgroundColor: '#29C097',
+    backgroundColor: Colors.primaryColor,
   },
   activeButtonText: { color: '#fff' },
-  input: {
-    padding: 15,
-    marginTop: 20,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgb(204,204,204)',
-  },
-  panel: {
-    height: 80,
-    padding: 20,
-    backgroundColor: '#ffffffFA',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-  },
-  panelButton: {
-    // minHeight: 50,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // borderRadius: 10,
-    // backgroundColor: '#29C097',
-  },
-  panelButtonTitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: 'white',
-  },
 });
