@@ -4,6 +4,7 @@ import { StyleSheet, View, Image, Text } from 'react-native';
 import { savePreferences } from '../../utils/config';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../../constants/Colors';
+import { MainStackNavProps } from '../../navigation/MainNavigator';
 
 const slides = [
   {
@@ -40,18 +41,10 @@ const slides = [
   },
 ];
 
-interface OnboardingSlidesProps {
-  onDone?: () => void;
-}
-
-export const OnboardingSlides: React.FC<OnboardingSlidesProps> = ({
-  onDone,
-}) => {
-  const navigation = useNavigation();
+export const OnboardingSlides = ({ navigation }: MainStackNavProps<'Help'>) => {
   const renderItem = ({ item }) => {
     return (
       <View style={[styles.slide, { backgroundColor: item.backgroundColor }]}>
-        {/* <Text style={styles.title}>{item.title}</Text> */}
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
@@ -71,7 +64,12 @@ export const OnboardingSlides: React.FC<OnboardingSlidesProps> = ({
 
   const handleDone = async () => {
     await savePreferences({ showOnboarding: false });
-    onDone ? onDone() : navigation.goBack();
+    navigation.canGoBack()
+      ? navigation.goBack()
+      : navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
   };
   return (
     <AppIntroSlider

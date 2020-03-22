@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  Platform,
-  StatusBar,
-  StyleSheet,
-  View,
-  Text,
-  Image,
-} from 'react-native';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { SplashScreen } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
@@ -15,12 +8,11 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import useLinking from './navigation/useLinking';
 import { getPreferences } from './utils/config';
-import { OnboardingSlides } from './screens/onboaring/OnboardingSlides';
 import MainNavigator from './navigation/MainNavigator';
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
-  const [showOnboarding, setShowOnboarding] = React.useState(false);
+  const [showOnboarding, setShowOnboarding] = React.useState(true);
   const [initialNavigationState, setInitialNavigationState] = React.useState<
     any
   >();
@@ -62,7 +54,7 @@ export default function App(props) {
         await Promise.all(cacheImages);
 
         const preferences = await getPreferences();
-        setShowOnboarding(preferences.showOnboarding);
+        // setShowOnboarding(preferences.showOnboarding);
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
@@ -75,26 +67,19 @@ export default function App(props) {
     loadResourcesAndDataAsync();
   }, []);
 
-  const onDone = async () => {
-    setShowOnboarding(false);
-  };
-
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return null;
   } else {
     return (
       <View style={styles.container}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-        {showOnboarding ? (
-          <OnboardingSlides onDone={onDone} />
-        ) : (
-          <NavigationContainer
-            ref={containerRef}
-            initialState={initialNavigationState}
-          >
-            <MainNavigator />
-          </NavigationContainer>
-        )}
+
+        <NavigationContainer
+          ref={containerRef}
+          initialState={initialNavigationState}
+        >
+          <MainNavigator showOnboarding={showOnboarding} />
+        </NavigationContainer>
       </View>
     );
   }
