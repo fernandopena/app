@@ -54,7 +54,7 @@ export default function App(props) {
         await Promise.all(cacheImages);
 
         const preferences = await getPreferences();
-        // setShowOnboarding(preferences.showOnboarding);
+        setShowOnboarding(preferences.showOnboarding);
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
