@@ -12,7 +12,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#29C097"
+      "backgroundColor": "#75AADB"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -20,11 +20,22 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "social.cotrack.app",
+      "buildNumber": "1.0.0",
       "infoPlist": {
         "UIBackgroundModes": ["location", "fetch"],
         "NSLocationWhenInUseUsageDescription": "CoTrack necesita acceder a su ubicación para poder poder establecer si ha estado en contacto con el virus",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "CoTrack necesita acceder a su ubicación para poder poder establecer si ha estado en contacto con el virus",
         "NSLocationAlwaysUsageDescription": "CoTrack necesita acceder a su ubicación para poder poder establecer si ha estado en contacto con el virus"
+      }
+    },
+    "android": {
+      "package": "social.cotrack.app",
+      "versionCode": 1,
+      "config": {
+        "googleMaps": {
+          "apiKey": "<GOOGLE_API_KEY>"
+        }
       }
     }
   }
