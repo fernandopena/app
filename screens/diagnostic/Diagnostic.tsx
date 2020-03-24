@@ -109,7 +109,8 @@ function Questionary({ onShowResults }: QuestionaryProps) {
     const hasSymptoms = Object.keys(state.symptoms).find(
       k => state.symptoms[k] === 'yes',
     );
-    const hasAnswers = Object.keys(state.questions).length >= 6;
+    const hasAnswers =
+      Object.keys(state.questions).filter(k => k !== 'pathology').length >= 5;
     if (!!hasSymptoms && !!hasAnswers) {
       setDisabled(false);
     } else {
@@ -333,10 +334,12 @@ function Questionary({ onShowResults }: QuestionaryProps) {
         </View>
       </ScrollView>
       <Touchable
+        enabled={!disabled}
         style={[
           styles.button,
           styles.activeButton,
           { width: undefined, margin: 10 },
+          disabled && { backgroundColor: '#ccc' },
         ]}
         onPress={handlePress}
       >
