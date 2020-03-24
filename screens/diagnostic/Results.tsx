@@ -143,7 +143,7 @@ function NegativeResults() {
             textAlign: 'center',
           }}
         >
-          Ministerio de Salud de la Nación
+          Ministerio de Salud
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text
@@ -155,13 +155,13 @@ function NegativeResults() {
             }}
             onPress={async () => {
               try {
-                await Linking.openURL(`tel:0800-222-1002`);
+                await Linking.openURL(`tel:0800-800-26843`);
               } catch (e) {
                 Alert.alert('Error al intentar hacer la llamada');
               }
             }}
           >
-            0800-222-1002
+            0800-800-26843 (COVID)
           </Text>
         </View>
         <Text>(opción 1)</Text>
