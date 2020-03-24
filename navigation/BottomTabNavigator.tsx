@@ -23,6 +23,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const INITIAL_ROUTE_NAME = 'Map';
 const isIOS = Platform.OS === 'ios';
+const isWeb = Platform.OS === 'web';
 
 type TabsParamsList = {
   Diagnostic: undefined;
@@ -86,6 +87,7 @@ function PreventionNavStack() {
           open: iosTransitionSpec,
           close: iosTransitionSpec,
         },
+        animationEnabled: !isWeb,
       }}
     >
       <PreventionStack.Screen

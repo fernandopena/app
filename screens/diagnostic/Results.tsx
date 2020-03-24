@@ -234,20 +234,20 @@ export default function Results({
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
+        <View
+          style={{
+            position: 'absolute',
+            backgroundColor: '#fff',
+            height: CIRCLE_WIDTH,
+            width: CIRCLE_WIDTH,
+            borderRadius: CIRCLE_WIDTH / 2,
+            // top: -(CIRCLE_WIDTH / 4),
+            // left: -(CIRCLE_WIDTH / 4),
+            top: -120,
+            left: -100,
+          }}
+        ></View>
         <View style={styles.card}>
-          <View
-            style={{
-              ...StyleSheet.absoluteFillObject,
-              backgroundColor: '#fff',
-              height: CIRCLE_WIDTH,
-              width: CIRCLE_WIDTH,
-              borderRadius: CIRCLE_WIDTH / 2,
-              // top: -(CIRCLE_WIDTH / 4),
-              // left: -(CIRCLE_WIDTH / 4),
-              top: -120,
-              left: -100,
-            }}
-          ></View>
           {results === 'positive' && <PositiveResults />}
           {results === 'neutral' && <NeutralResults />}
           {results === 'negative' && <NegativeResults />}

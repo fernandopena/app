@@ -5,6 +5,7 @@ import { savePreferences } from '../../utils/config';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../../constants/Colors';
 import { MainStackNavProps } from '../../navigation/MainNavigator';
+import Layout from '../../constants/Layout';
 
 const slides = [
   {
@@ -83,6 +84,10 @@ export const OnboardingSlides = ({ navigation }: MainStackNavProps<'Help'>) => {
       activeDotStyle={styles.activeDot}
       slides={slides}
       onDone={handleDone}
+      contentContainerStyle={{
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+      }}
     />
   );
 };
@@ -92,6 +97,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    maxWidth: Layout.maxWidth,
+    width: '100%',
     padding: 20,
   },
   logo: {
