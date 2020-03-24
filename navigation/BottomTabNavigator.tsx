@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   createStackNavigator,
   TransitionPresets,
 } from '@react-navigation/stack';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
-import { Ionicons as Icon } from '@expo/vector-icons';
 
 import TabBarIcon from '../components/TabBarIcon';
 import Diagnostic from '../screens/diagnostic/Diagnostic';
@@ -19,7 +18,7 @@ import { PreventionParamsList } from '../screens/prevention/types';
 import Results from '../screens/diagnostic/Results';
 import { TransitionSpec } from '@react-navigation/stack/lib/typescript/src/types';
 import { DiagnosticParamsList } from '../screens/diagnostic/types';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { HelpButton } from '../components/HelpButton';
 
 const INITIAL_ROUTE_NAME = 'Map';
 const isIOS = Platform.OS === 'ios';
@@ -55,21 +54,6 @@ const iosTransitionSpec: TransitionSpec = {
 const PreventionStack = createSharedElementStackNavigator<
   PreventionParamsList
 >();
-
-function HelpButton() {
-  const navigation = useNavigation();
-  return (
-    <TouchableWithoutFeedback onPress={() => navigation.navigate('Help')}>
-      <Icon
-        name="ios-help-circle-outline"
-        size={30}
-        color="#fff"
-        // backgroundColor={Colors.primaryColor}
-        style={{ paddingRight: 20 }}
-      />
-    </TouchableWithoutFeedback>
-  );
-}
 
 function PreventionNavStack() {
   useFocusEffect(
