@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Platform,
   Text,
@@ -118,6 +118,7 @@ const panelStyles = StyleSheet.create({
 
 export default function Map({ navigation }) {
   const { location, error } = useLocation({ runInBackground: true });
+  const [mapReady, setMapReady] = useState(false);
   const mapRef = useRef<MapView>();
   const refRBSheet = useRef();
 
@@ -146,6 +147,7 @@ export default function Map({ navigation }) {
         }}
         style={styles.map}
         showsMyLocationButton={false}
+        onMapReady={() => setMapReady(true)}
       />
       <SafeAreaView style={[styles.buttonContainer]}>
         <TouchableOpacity
@@ -174,17 +176,19 @@ export default function Map({ navigation }) {
           <Icon
             name={`${Platform.OS === 'ios' ? 'ios' : 'md'}-locate`}
             size={24}
-            color={!location ? Colors.tabIconDefault : rgba(66, 135, 244, 1)}
+            color={!location ? Colors.tabIconDefault : 'rgba(66, 135, 244, 1)'}
           />
         </TouchableOpacity>
       </SafeAreaView>
-      <BottomSheet
-        ref={refRBSheet}
-        snapPoints={['40%', 150, 50]}
-        renderContent={PanelContent}
-        renderHeader={PanelHeader}
-        initialSnap={1}
-      />
+      {mapReady && (
+        <BottomSheet
+          ref={refRBSheet}
+          snapPoints={['40%', 150, 50]}
+          renderContent={PanelContent}
+          renderHeader={PanelHeader}
+          initialSnap={1}
+        />
+      )}
     </View>
   );
 }
