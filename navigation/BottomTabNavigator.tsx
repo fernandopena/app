@@ -21,8 +21,9 @@ import { TransitionSpec } from '@react-navigation/stack/lib/typescript/src/types
 import { DiagnosticParamsList } from '../screens/diagnostic/types';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-const INITIAL_ROUTE_NAME = 'Map';
+const INITIAL_ROUTE_NAME = 'Diagnostic';
 const isIOS = Platform.OS === 'ios';
+const isWeb = Platform.OS === 'web';
 
 type TabsParamsList = {
   Diagnostic: undefined;
@@ -86,6 +87,7 @@ function PreventionNavStack() {
           open: iosTransitionSpec,
           close: iosTransitionSpec,
         },
+        animationEnabled: !isWeb,
       }}
     >
       <PreventionStack.Screen
@@ -149,6 +151,7 @@ export default function BottomTabNavigator() {
     <Tab.Navigator
       initialRouteName={INITIAL_ROUTE_NAME}
       tabBarOptions={{ showLabel: false }}
+      screenOptions={{}}
     >
       <Tab.Screen
         name="Diagnostic"

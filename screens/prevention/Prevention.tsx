@@ -88,13 +88,21 @@ export default function Prevention({
         }
       >
         <View style={styles.card}>
-          <SharedElement id={item.id}>
+          {Platform.OS === 'web' ? (
             <Image
               source={item.image}
               style={styles.cardImage}
               resizeMode="cover"
             />
-          </SharedElement>
+          ) : (
+            <SharedElement id={item.id}>
+              <Image
+                source={item.image}
+                style={styles.cardImage}
+                resizeMode="cover"
+              />
+            </SharedElement>
+          )}
           <Text style={styles.cardTitle}>{item.title}</Text>
           <Text style={styles.cardText}>{item.shortText}</Text>
         </View>
@@ -129,6 +137,15 @@ const styles = StyleSheet.create({
     margin: 5,
     ...Platform.select({
       ios: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+      web: {
         shadowColor: '#000',
         shadowOffset: {
           width: 0,

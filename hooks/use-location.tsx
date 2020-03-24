@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { LocationData } from 'expo-location';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
+import * as Permissions from 'expo-permissions';
 
 import { locationService } from '../utils/locationService';
 
@@ -23,17 +24,25 @@ if (!TaskManager.isTaskDefined(LOCATION_TASK_NAME)) {
   });
 }
 
-export const useLocation = ({
-  runInBackground,
-}: {
-  runInBackground?: Boolean;
-}) => {
+export const useLocation = (
+  {
+    runInBackground,
+  }: {
+    runInBackground?: Boolean;
+  } = { runInBackground: false },
+) => {
   const [location, setLocation] = useState<LocationData | undefined>();
   const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     async function getLocationAsync() {
       let { status, ios } = await Location.requestPermissionsAsync();
+      let {
+        permissions: { location },
+      } = await Permissions.askAsync(Permissions.LOCATION);
+      console.log('getLocationAsync -> location', location);
+
+      console.log('getLocationAsync -> status, ios', status, ios);
       if (status !== 'granted') {
         setError('El permiso para acceder a la ubicación fue denegado');
       } else {

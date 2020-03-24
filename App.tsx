@@ -9,6 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import useLinking from './navigation/useLinking';
 import { getPreferences } from './utils/config';
 import MainNavigator from './navigation/MainNavigator';
+import Layout from './constants/Layout';
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -89,6 +90,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    ...Platform.select({
+      web: {
+        maxWidth: Layout.maxWidth,
+        margin: 'auto',
+        width: '100%',
+      },
+    }),
   },
   slide: {
     flex: 1,
