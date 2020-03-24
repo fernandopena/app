@@ -117,6 +117,12 @@ function Questionary({ onShowResults }: QuestionaryProps) {
     }
   }, [state]);
 
+  const handleShowResults = result => {
+    console.log('Diagnostic saved!');
+    onShowResults(result);
+    scrollRef.current.scrollTo({ x: 0, animated: false });
+  };
+
   const handlePress = async () => {
     let result: QuestResults;
     function hasExtraConditions() {
@@ -170,6 +176,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
           },
         ]),
       );
+      handleShowResults(result);
     } else {
       db.transaction(
         tx => {
@@ -184,9 +191,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
         (error: SQLError) =>
           console.log('Error inserting values', error.message),
         () => {
-          console.log('Diagnostic saved!');
-          onShowResults(result);
-          scrollRef.current.scrollTo({ x: 0, animated: false });
+          handleShowResults(result);
         },
       );
     }
