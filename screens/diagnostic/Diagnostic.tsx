@@ -6,6 +6,7 @@ import {
   Platform,
   ScrollView,
   StatusBar,
+  AsyncStorage,
 } from 'react-native';
 import { useScrollToTop } from '@react-navigation/native';
 import * as SQLite from 'expo-sqlite';
@@ -16,7 +17,8 @@ import Colors from '../../constants/Colors';
 import Touchable from '../../components/Touchable';
 import { SQLITE_DB_NAME } from '../../utils/config';
 
-const db = SQLite.openDatabase(SQLITE_DB_NAME);
+const isWeb = Platform.OS === 'web';
+const db = !isWeb && SQLite.openDatabase(SQLITE_DB_NAME);
 
 const initialState = {
   symptoms: {},
@@ -145,29 +147,49 @@ function Questionary({ onShowResults }: QuestionaryProps) {
 
     let location;
     try {
-      location = await Location.getLastKnownPositionAsync();
+      // location = await Location.getLastKnownPositionAsync();
+      location = await Location.getCurrentPositionAsync();
     } catch (e) {
       console.log('Could not get last known location', e);
       location = '';
     }
 
-    db.transaction(
-      tx => {
-        tx.executeSql(
-          'insert into diagnostics (answers, result, location, created_at) values (?, ?, ?, strftime("%s","now"))',
-          [state, result, location],
-        );
-        // tx.executeSql('select * from diagnostics', [], (_, { rows }) =>
-        //   console.log(rows),
-        // );
-      },
-      (error: SQLError) => console.log('Error inserting values', error.message),
-      () => {
-        console.log('Diagnostic saved!');
-        onShowResults(result);
-        scrollRef.current.scrollTo({ x: 0, animated: false });
-      },
-    );
+    if (isWeb) {
+      const diagnostics =
+        JSON.parse(await AsyncStorage.getItem('diagnostics')) || [];
+      const now = new Date().getTime();
+      await AsyncStorage.setItem(
+        `diagnostics`,
+        JSON.stringify([
+          ...diagnostics,
+          {
+            answers: state,
+            result,
+            location,
+            created_at: now,
+          },
+        ]),
+      );
+    } else {
+      db.transaction(
+        tx => {
+          tx.executeSql(
+            'insert into diagnostics (answers, result, location, created_at) values (?, ?, ?, strftime("%s","now"))',
+            [state, result, location],
+          );
+          // tx.executeSql('select * from diagnostics', [], (_, { rows }) =>
+          //   console.log(rows),
+          // );
+        },
+        (error: SQLError) =>
+          console.log('Error inserting values', error.message),
+        () => {
+          console.log('Diagnostic saved!');
+          onShowResults(result);
+          scrollRef.current.scrollTo({ x: 0, animated: false });
+        },
+      );
+    }
   };
 
   const handleYesNoPress = values => {

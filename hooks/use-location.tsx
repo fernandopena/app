@@ -27,7 +27,8 @@ if (!TaskManager.isTaskDefined(LOCATION_TASK_NAME)) {
   });
 }
 
-const db = SQLite.openDatabase(SQLITE_DB_NAME);
+const isWeb = Platform.OS === 'web';
+const db = !isWeb && SQLite.openDatabase(SQLITE_DB_NAME);
 
 export const useLocation = (
   {
@@ -48,7 +49,7 @@ export const useLocation = (
       if (status !== 'granted') {
         setError('El permiso para acceder a la ubicación fue denegado');
       } else {
-        let location = await Location.getCurrentPositionAsync({});
+        let location = await Location.getCurrentPositionAsync();
         setLocation(location);
         try {
           if (

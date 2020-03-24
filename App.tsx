@@ -12,7 +12,8 @@ import { getPreferences, SQLITE_DB_NAME } from './utils/config';
 import MainNavigator from './navigation/MainNavigator';
 import Layout from './constants/Layout';
 
-const db = SQLite.openDatabase(SQLITE_DB_NAME);
+const isWeb = Platform.OS === 'web';
+const db = !isWeb && SQLite.openDatabase(SQLITE_DB_NAME);
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -29,23 +30,25 @@ export default function App(props) {
       try {
         SplashScreen.preventAutoHide();
 
-        //Create DB Tables
-        db.transaction(
-          tx => {
-            // tx.executeSql('drop table diagnostics');
-            tx.executeSql(
-              'create table if not exists diagnostics (id integer primary key not null, answers json, result text, location json, created_at int);',
-            );
-            tx.executeSql(
-              'create table if not exists locations (id integer primary key not null, location json, created_at int);',
-            );
-          },
-          (error: SQLError) =>
-            console.log('Error in transaction', error.message),
-          () => {
-            console.log('Create tables success');
-          },
-        );
+        if (!isWeb) {
+          //Create DB Tables
+          db.transaction(
+            tx => {
+              // tx.executeSql('drop table diagnostics');
+              tx.executeSql(
+                'create table if not exists diagnostics (id integer primary key not null, answers json, result text, location json, created_at int);',
+              );
+              tx.executeSql(
+                'create table if not exists locations (id integer primary key not null, location json, created_at int);',
+              );
+            },
+            (error: SQLError) =>
+              console.log('Error in transaction', error.message),
+            () => {
+              console.log('Create tables success');
+            },
+          );
+        }
 
         // Load our initial navigation state
         setInitialNavigationState(await getInitialState());
