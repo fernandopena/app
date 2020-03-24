@@ -7,20 +7,20 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
+import { useScrollToTop } from '@react-navigation/native';
+import * as SQLite from 'expo-sqlite';
+import * as Location from 'expo-location';
 
 import { QuestResults } from './types';
-import { useScrollToTop } from '@react-navigation/native';
 import Colors from '../../constants/Colors';
 import Touchable from '../../components/Touchable';
+import { SQLITE_DB_NAME } from '../../utils/config';
+
+const db = SQLite.openDatabase(SQLITE_DB_NAME);
 
 const initialState = {
-  symptoms: new Map(),
-  travel: undefined,
-  confirmedContact: undefined,
-  suspectedContact: undefined,
-  pregnant: undefined,
-  elder: undefined,
-  pathology: undefined,
+  symptoms: {},
+  questions: {},
 };
 
 function reducer(state, newState) {
@@ -28,7 +28,7 @@ function reducer(state, newState) {
 }
 
 function QuestButton({ id, text, onPress, selected }) {
-  const isSelected = !!selected.get(id);
+  const isSelected = selected[id] === 'yes';
 
   const handlePress = () => {
     onPress(id);
@@ -51,11 +51,17 @@ function YesNoButtons({ id, onPress, state }) {
   const isNo = state[id] === 'no';
 
   const handleYesPress = () => {
-    onPress({ [id]: 'yes' });
+    onSelect('yes');
   };
   const handleNoPress = () => {
-    onPress({ [id]: 'no' });
+    onSelect('no');
   };
+
+  const onSelect = value => {
+    const newState = { ...state, [id]: value };
+    onPress(newState);
+  };
+
   return (
     <>
       <Touchable
@@ -88,62 +94,84 @@ function Questionary({ onShowResults }: QuestionaryProps) {
 
   const onSelectSymptoms = useCallback(
     id => {
-      const newSelected = new Map(state.symptoms);
-      newSelected.set(id, !state.symptoms.get(id));
-
+      const newSelected = {
+        ...state.symptoms,
+        [id]: state.symptoms[id] === 'yes' ? 'no' : 'yes',
+      };
       setState({ symptoms: newSelected });
     },
     [state.symptoms],
   );
 
   useEffect(() => {
-    const hasSymptoms =
-      state.symptoms.size > 0 &&
-      Array.from(state.symptoms).find((s: [string, boolean]) => s[1]);
-
-    if (
-      !!hasSymptoms &&
-      state?.travel &&
-      state?.confirmedContact &&
-      state?.suspectedContact &&
-      state?.elder &&
-      state?.pregnant &&
-      state?.pathology
-    ) {
+    const hasSymptoms = Object.keys(state.symptoms).find(
+      k => state.symptoms[k] === 'yes',
+    );
+    const hasAnswers = Object.keys(state.questions).length >= 6;
+    if (!!hasSymptoms && !!hasAnswers) {
       setDisabled(false);
     } else {
       setDisabled(true);
     }
   }, [state]);
 
-  const handlePress = () => {
+  const handlePress = async () => {
+    let result: QuestResults;
     function hasExtraConditions() {
       if (
-        state.elder === 'yes' ||
-        state.pregnant === 'yes' ||
-        state.pathology === 'yes'
+        state.questions['elder'] === 'yes' ||
+        state.questions['pregnant'] === 'yes' ||
+        state.questions['pathology'] === 'yes'
       ) {
-        onShowResults('negative');
+        result = 'negative';
       } else {
-        onShowResults('neutral');
+        result = 'neutral';
       }
     }
     if (
-      state.symptoms.get('fever') &&
-      state.travel === 'yes' &&
-      state.confirmedContact === 'yes' &&
-      state.suspectedContact === 'yes'
+      state.symptoms['fever'] === 'yes' &&
+      state.questions['travel'] === 'yes' &&
+      state.questions['confirmedContact'] === 'yes' &&
+      state.questions['suspectedContact'] === 'yes'
     ) {
-      if (state.symptoms.get('breath')) {
-        onShowResults('negative');
+      if (state.symptoms['breath']) {
+        result = 'negative';
       } else {
         hasExtraConditions();
       }
     } else {
-      onShowResults('positive');
+      result = 'positive';
     }
 
-    scrollRef.current.scrollTo({ x: 0, animated: false });
+    let location;
+    try {
+      location = await Location.getLastKnownPositionAsync();
+    } catch (e) {
+      console.log('Could not get last known location', e);
+      location = '';
+    }
+
+    db.transaction(
+      tx => {
+        tx.executeSql(
+          'insert into diagnostics (answers, result, location, created_at) values (?, ?, ?, strftime("%s","now"))',
+          [state, result, location],
+        );
+        // tx.executeSql('select * from diagnostics', [], (_, { rows }) =>
+        //   console.log(rows),
+        // );
+      },
+      (error: SQLError) => console.log('Error inserting values', error.message),
+      () => {
+        console.log('Diagnostic saved!');
+        onShowResults(result);
+        scrollRef.current.scrollTo({ x: 0, animated: false });
+      },
+    );
+  };
+
+  const handleYesNoPress = values => {
+    setState({ questions: values });
   };
 
   const scrollRef = React.useRef<ScrollView | null>(null);
@@ -217,7 +245,11 @@ function Questionary({ onShowResults }: QuestionaryProps) {
           coronavirus?
         </Text>
         <View style={styles.questButtons}>
-          <YesNoButtons id="travel" onPress={setState} state={state} />
+          <YesNoButtons
+            id="travel"
+            onPress={handleYesNoPress}
+            state={state.questions}
+          />
         </View>
         <Text style={styles.subtitle}>
           ¿Tuviste contacto estrecho con alguien con diagnóstico confirmado?
@@ -225,8 +257,8 @@ function Questionary({ onShowResults }: QuestionaryProps) {
         <View style={styles.questButtons}>
           <YesNoButtons
             id="confirmedContact"
-            onPress={setState}
-            state={state}
+            onPress={handleYesNoPress}
+            state={state.questions}
           />
         </View>
         <Text style={styles.subtitle}>
@@ -235,20 +267,28 @@ function Questionary({ onShowResults }: QuestionaryProps) {
         <View style={styles.questButtons}>
           <YesNoButtons
             id="suspectedContact"
-            onPress={setState}
-            state={state}
+            onPress={handleYesNoPress}
+            state={state.questions}
           />
         </View>
         <Text style={styles.section}>Situación actual y antecedentes</Text>
         <Text style={styles.subtitle}>¿Tenés 60 años o más?</Text>
         <View style={styles.questButtons}>
-          <YesNoButtons id="elder" onPress={setState} state={state} />
+          <YesNoButtons
+            id="elder"
+            onPress={handleYesNoPress}
+            state={state.questions}
+          />
         </View>
         <Text style={styles.subtitle}>
           ¿Estás embarazada o en contacto con un recién nacido?
         </Text>
         <View style={styles.questButtons}>
-          <YesNoButtons id="pregnant" onPress={setState} state={state} />
+          <YesNoButtons
+            id="pregnant"
+            onPress={handleYesNoPress}
+            state={state.questions}
+          />
         </View>
         <Text style={styles.subtitle}>
           ¿Sufrís alguna de las siguientes patologías?{`\n\n`} - Cáncer
@@ -258,7 +298,11 @@ function Questionary({ onShowResults }: QuestionaryProps) {
           {`\n`} - Hipertensión arterial {`\n`} - Hipo o hipertiroidismo
         </Text>
         <View style={styles.questButtons}>
-          <YesNoButtons id="pathology" onPress={setState} state={state} />
+          <YesNoButtons
+            id="pathology"
+            onPress={handleYesNoPress}
+            state={state.questions}
+          />
         </View>
       </ScrollView>
       <Touchable

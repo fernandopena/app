@@ -26,3 +26,5 @@ export async function savePreferences(preferences: UserPreferences) {
   );
   _preferences = newPreferences;
 }
+
+export const SQLITE_DB_NAME = 'cotrack.db';

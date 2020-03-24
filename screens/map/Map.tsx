@@ -9,10 +9,9 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
-import MapView, { PROVIDER_GOOGLE, Heatmap } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import BottomSheet from 'reanimated-bottom-sheet';
 
-import { locationService } from '../../utils/locationService';
 import { useLocation } from '../../hooks/use-location';
 import Colors from '../../constants/Colors';
 

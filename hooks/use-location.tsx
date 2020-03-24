@@ -4,8 +4,10 @@ import { LocationData } from 'expo-location';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import * as Permissions from 'expo-permissions';
+import * as SQLite from 'expo-sqlite';
 
 import { locationService } from '../utils/locationService';
+import { SQLITE_DB_NAME } from '../utils/config';
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
@@ -18,11 +20,14 @@ if (!TaskManager.isTaskDefined(LOCATION_TASK_NAME)) {
     }
     if (data) {
       const { locations } = data as any;
+      // console.log('locations', locations);
       const [location] = locations;
       locationService.setLocation(location);
     }
   });
 }
+
+const db = SQLite.openDatabase(SQLITE_DB_NAME);
 
 export const useLocation = (
   {
@@ -40,9 +45,6 @@ export const useLocation = (
       let {
         permissions: { location },
       } = await Permissions.askAsync(Permissions.LOCATION);
-      console.log('getLocationAsync -> location', location);
-
-      console.log('getLocationAsync -> status, ios', status, ios);
       if (status !== 'granted') {
         setError('El permiso para acceder a la ubicación fue denegado');
       } else {
@@ -57,8 +59,8 @@ export const useLocation = (
             await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
               accuracy: Location.Accuracy.Balanced,
               distanceInterval: 100,
-              //   deferredUpdatesDistance: 100
-              // deferredUpdatesInterval: 10000
+              // deferredUpdatesDistance: 10000,
+              // deferredUpdatesInterval: 10000,
             });
           }
         } catch (e) {
@@ -82,7 +84,23 @@ export const useLocation = (
 
   useEffect(() => {
     function onLocationUpdate(location) {
-      // TODO: save location locally
+      // console.log('onLocationUpdate -> location', location);
+      db.transaction(
+        tx => {
+          tx.executeSql(
+            'insert into locations (location, created_at) values (?, strftime("%s","now"))',
+            [location],
+          );
+          // tx.executeSql('select * from locations', [], (_, { rows }) =>
+          //   console.log(rows),
+          // );
+        },
+        (error: SQLError) =>
+          console.log('Error inserting values', error.message),
+        () => {
+          // console.log('Location saved!');
+        },
+      );
     }
 
     locationService.subscribe(onLocationUpdate);

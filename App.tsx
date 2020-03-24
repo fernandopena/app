@@ -5,11 +5,14 @@ import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
+import * as SQLite from 'expo-sqlite';
 
 import useLinking from './navigation/useLinking';
-import { getPreferences } from './utils/config';
+import { getPreferences, SQLITE_DB_NAME } from './utils/config';
 import MainNavigator from './navigation/MainNavigator';
 import Layout from './constants/Layout';
+
+const db = SQLite.openDatabase(SQLITE_DB_NAME);
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -25,6 +28,24 @@ export default function App(props) {
     async function loadResourcesAndDataAsync() {
       try {
         SplashScreen.preventAutoHide();
+
+        //Create DB Tables
+        db.transaction(
+          tx => {
+            // tx.executeSql('drop table diagnostics');
+            tx.executeSql(
+              'create table if not exists diagnostics (id integer primary key not null, answers json, result text, location json, created_at int);',
+            );
+            tx.executeSql(
+              'create table if not exists locations (id integer primary key not null, location json, created_at int);',
+            );
+          },
+          (error: SQLError) =>
+            console.log('Error in transaction', error.message),
+          () => {
+            console.log('Create tables success');
+          },
+        );
 
         // Load our initial navigation state
         setInitialNavigationState(await getInitialState());
