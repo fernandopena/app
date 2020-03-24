@@ -211,7 +211,7 @@ function NegativeResults() {
 //   );
 // }
 
-const CIRCLE_WIDTH = Layout.window.width * 1.5;
+const CIRCLE_WIDTH = Layout.window.width * 1.6;
 
 export default function Results({
   route,
@@ -234,18 +234,20 @@ export default function Results({
         showsVerticalScrollIndicator={false}
       >
         <View
-          style={{
-            position: 'absolute',
-            backgroundColor: '#fff',
-            height: CIRCLE_WIDTH,
-            width: CIRCLE_WIDTH,
-            borderRadius: CIRCLE_WIDTH / 2,
-            // top: -(CIRCLE_WIDTH / 4),
-            // left: -(CIRCLE_WIDTH / 4),
-            top: -120,
-            left: -100,
-          }}
-        ></View>
+          style={[
+            {
+              position: 'absolute',
+              backgroundColor: '#fff',
+              height: CIRCLE_WIDTH,
+              width: CIRCLE_WIDTH,
+              borderRadius: CIRCLE_WIDTH / 2,
+              transform: [
+                { translateX: -(Layout.window.width * 0.3) },
+                { translateY: -(CIRCLE_WIDTH / 2) },
+              ],
+            },
+          ]}
+        />
         <View style={styles.card}>
           {results === 'positive' && <PositiveResults />}
           {results === 'neutral' && <NeutralResults />}
