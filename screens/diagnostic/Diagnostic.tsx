@@ -138,9 +138,9 @@ function Questionary({ onShowResults }: QuestionaryProps) {
     }
     if (
       state.symptoms['fever'] === 'yes' &&
-      state.questions['travel'] === 'yes' &&
-      state.questions['confirmedContact'] === 'yes' &&
-      state.questions['suspectedContact'] === 'yes'
+      (state.questions['travel'] === 'yes' ||
+        state.questions['confirmedContact'] === 'yes' ||
+        state.questions['suspectedContact'] === 'yes')
     ) {
       if (state.symptoms['breath']) {
         result = 'negative';
