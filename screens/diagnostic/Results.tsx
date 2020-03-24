@@ -164,7 +164,6 @@ function NegativeResults() {
             0800-800-26843 (COVID)
           </Text>
         </View>
-        <Text>(opción 1)</Text>
       </View>
       <Text style={styles.cardText}>
         Si tus síntomas fueron cambiando, por favor volvé a realizar el
