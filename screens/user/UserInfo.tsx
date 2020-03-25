@@ -91,17 +91,26 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
             ]}
             onChange={handleChange('gender')}
           />
-          <TextInputMask
-            placeholder="Fecha de Nacimiento (DD/MM/YYYY)"
-            type="datetime"
-            options={{
-              format: 'DD/MM/YYYY',
-            }}
-            value={state.dob}
-            onChangeText={handleChange('dob')}
-            style={styles.input}
-            ref={dobRef}
-          />
+          {Platform.OS === 'web' ? (
+            <TextInput
+              placeholder="Fecha de Nacimiento (DD/MM/YYYY)"
+              value={state.dob}
+              onChangeText={handleChange('dob')}
+              style={styles.input}
+            />
+          ) : (
+            <TextInputMask
+              placeholder="Fecha de Nacimiento (DD/MM/YYYY)"
+              type="datetime"
+              options={{
+                format: 'DD/MM/YYYY',
+              }}
+              value={state.dob}
+              onChangeText={handleChange('dob')}
+              style={styles.input}
+              ref={dobRef}
+            />
+          )}
           <Touchable
             enabled={canSave}
             style={[
