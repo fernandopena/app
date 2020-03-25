@@ -154,8 +154,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
 
     let location;
     try {
-      // location = await Location.getLastKnownPositionAsync();
-      location = await Location.getCurrentPositionAsync();
+      location = await Location.getLastKnownPositionAsync();
     } catch (e) {
       console.log('Could not get last known location', e);
       location = '';
