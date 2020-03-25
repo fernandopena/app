@@ -121,7 +121,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
   const handleShowResults = result => {
     console.log('Diagnostic saved!');
     onShowResults(result);
-    scrollRef.current.scrollTo({ x: 0, animated: false });
+    // scrollRef.current.scrollTo({ x: 0, animated: false });
   };
 
   const handlePress = async () => {
