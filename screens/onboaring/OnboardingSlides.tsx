@@ -1,11 +1,10 @@
 import React from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { StyleSheet, View, Image, Text } from 'react-native';
-import { savePreferences } from '../../utils/config';
-import { useNavigation } from '@react-navigation/native';
+import { savePreferences, getPreferences } from '../../utils/config';
 import Colors from '../../constants/Colors';
-import { MainStackNavProps } from '../../navigation/MainNavigator';
 import Layout from '../../constants/Layout';
+import { MainStackNavProps } from '../../navigation/types';
 
 const slides = [
   {
@@ -64,12 +63,13 @@ export const OnboardingSlides = ({ navigation }: MainStackNavProps<'Help'>) => {
   };
 
   const handleDone = async () => {
+    const preferences = await getPreferences();
     await savePreferences({ showOnboarding: false });
     navigation.canGoBack()
       ? navigation.goBack()
       : navigation.reset({
           index: 0,
-          routes: [{ name: 'Main' }],
+          routes: [{ name: preferences.userInfo ? 'Main' : 'UserInfo' }],
         });
   };
   return (

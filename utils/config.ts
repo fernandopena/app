@@ -1,11 +1,13 @@
 import { AsyncStorage } from 'react-native';
 
-interface UserPreferences {
+export interface UserPreferences {
   showOnboarding?: boolean;
+  userInfo?: any;
 }
 
 const defaultPreferences: UserPreferences = {
   showOnboarding: true,
+  userInfo: undefined,
 };
 
 let _preferences: UserPreferences;
@@ -25,6 +27,11 @@ export async function savePreferences(preferences: UserPreferences) {
     JSON.stringify(newPreferences),
   );
   _preferences = newPreferences;
+}
+
+export async function clearPreferences() {
+  await AsyncStorage.removeItem('user_preferences');
+  _preferences = null;
 }
 
 export const SQLITE_DB_NAME = 'cotrack.db';

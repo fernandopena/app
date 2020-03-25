@@ -12,6 +12,8 @@ import {
   getPreferences,
   SQLITE_DB_NAME,
   SQLITE_DB_VERSION,
+  UserPreferences,
+  // clearPreferences,
 } from './utils/config';
 import MainNavigator from './navigation/MainNavigator';
 import Layout from './constants/Layout';
@@ -21,7 +23,10 @@ const db = !isWeb && SQLite.openDatabase(SQLITE_DB_NAME);
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
-  const [showOnboarding, setShowOnboarding] = React.useState(true);
+  // const [showOnboarding, setShowOnboarding] = React.useState(true);
+  const [preferences, setPreferences] = React.useState<
+    UserPreferences | undefined
+  >();
   const [initialNavigationState, setInitialNavigationState] = React.useState<
     any
   >();
@@ -96,8 +101,9 @@ export default function App(props) {
 
         await Promise.all(cacheImages);
 
+        // await clearPreferences();
         const preferences = await getPreferences();
-        setShowOnboarding(preferences.showOnboarding);
+        setPreferences(preferences);
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
@@ -121,7 +127,7 @@ export default function App(props) {
           ref={containerRef}
           initialState={initialNavigationState}
         >
-          <MainNavigator showOnboarding={showOnboarding} />
+          <MainNavigator {...preferences} />
         </NavigationContainer>
       </View>
     );
