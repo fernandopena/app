@@ -9,7 +9,6 @@ import { MainStackNavProps } from '../../navigation/types';
 const slides = [
   {
     key: 'somethun',
-    title: 'Title 1',
     text:
       'CoTrack necesita saber tu ubicación para avisarte en tiempo real si en tu recorrido estuviste en contacto cercano con alguna persona contagiada',
     image: require('../../assets/images/prevention/spread.png'),
@@ -17,7 +16,6 @@ const slides = [
   },
   {
     key: 'somethun-dos',
-    title: 'Title 2',
     text:
       'Si presentás síntomas o creés haber estado en contacto con alguien infectado, CoTrack te puede ayudar a realizar un diagnóstico y aconsejarte qué hacer según el resultado',
     image: require('../../assets/images/prevention/fever.png'),
@@ -25,20 +23,18 @@ const slides = [
   },
   {
     key: 'somethun3',
-    title: 'Rocket guy',
     text:
       'CoTrack te brinda información completa y confiable para ayudar a prevenir la infección, medidas para resguardarse e información útil y actualizada',
     image: require('../../assets/images/prevention/washing.png'),
     backgroundColor: '#fff',
   },
-  {
-    key: 'somethun4',
-    title: 'Rocket guy',
-    text:
-      'CoTrack no envía datos privados ni requiere que te identifiques, tan sólo saber tu ubicación, la cual también podés decidir si compartirla o no en caso de contagio',
-    image: require('../../assets/images/prevention/warning.png'),
-    backgroundColor: '#fff',
-  },
+  // {
+  //   key: 'somethun4',
+  //   text:
+  //     'CoTrack no envía datos privados ni requiere que te identifiques, tan sólo saber tu ubicación, la cual también podés decidir si compartirla o no en caso de contagio',
+  //   image: require('../../assets/images/prevention/warning.png'),
+  //   backgroundColor: '#fff',
+  // },
 ];
 
 export const OnboardingSlides = ({ navigation }: MainStackNavProps<'Help'>) => {
