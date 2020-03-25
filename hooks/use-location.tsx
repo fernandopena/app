@@ -49,9 +49,9 @@ export const useLocation = (
       if (status !== 'granted') {
         setError('El permiso para acceder a la ubicación fue denegado');
       } else {
-        let location = await Location.getCurrentPositionAsync();
-        setLocation(location);
         try {
+          let location = await Location.getCurrentPositionAsync();
+          setLocation(location);
           if (
             runInBackground &&
             (Platform.OS !== 'ios' ||
