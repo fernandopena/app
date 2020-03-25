@@ -182,7 +182,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
         tx => {
           tx.executeSql(
             'insert into diagnostics (answers, result, location, created_at) values (?, ?, ?, strftime("%s","now"))',
-            [state, result, location],
+            [JSON.stringify(state), result, JSON.stringify(location)],
           );
           // tx.executeSql('select * from diagnostics', [], (_, { rows }) =>
           //   console.log(rows),

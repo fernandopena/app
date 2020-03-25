@@ -36,10 +36,10 @@ export default function App(props) {
             tx => {
               // tx.executeSql('drop table diagnostics');
               tx.executeSql(
-                'create table if not exists diagnostics (id integer primary key not null, answers json, result text, location json, created_at int);',
+                'create table if not exists diagnostics (id integer primary key not null, answers text, result text, location text, created_at int);',
               );
               tx.executeSql(
-                'create table if not exists locations (id integer primary key not null, location json, created_at int);',
+                'create table if not exists locations (id integer primary key not null, location text, created_at int);',
               );
             },
             (error: SQLError) =>

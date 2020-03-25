@@ -90,7 +90,7 @@ export const useLocation = (
         tx => {
           tx.executeSql(
             'insert into locations (location, created_at) values (?, strftime("%s","now"))',
-            [location],
+            [JSON.stringify(location)],
           );
           // tx.executeSql('select * from locations', [], (_, { rows }) =>
           //   console.log(rows),
