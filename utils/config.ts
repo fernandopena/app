@@ -28,3 +28,4 @@ export async function savePreferences(preferences: UserPreferences) {
 }
 
 export const SQLITE_DB_NAME = 'cotrack.db';
+export const SQLITE_DB_VERSION = 1;
