@@ -14,6 +14,7 @@ import { MainStackNavProps } from '../../navigation/types';
 import Touchable from '../../components/Touchable';
 import Colors from '../../constants/Colors';
 import { savePreferences } from '../../utils/config';
+import RadioButtons from '../../components/RadioButtons';
 
 function reducer(state, newState) {
   return { ...state, ...newState };
@@ -30,12 +31,14 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
 
   useEffect(() => {
     if (
-      state.phoneNumber !== '' &&
-      state.gender !== '' &&
-      state.dob !== '' &&
+      (state.phoneNumber || '') !== '' &&
+      (state.gender || '') !== '' &&
+      (state.dob || '') !== '' &&
       dobRef.current.isValid()
     ) {
       setCanSave(true);
+    } else {
+      setCanSave(false);
     }
   }, [state]);
 
@@ -68,12 +71,19 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
             keyboardType="phone-pad"
             style={styles.input}
           />
-          <TextInput
-            placeholder="Sexo"
-            value={state.gender}
-            onChangeText={handleChange('gender')}
-            keyboardType="default"
-            style={styles.input}
+          <RadioButtons
+            label="Sexo"
+            options={[
+              {
+                key: 'M',
+                text: 'M',
+              },
+              {
+                key: 'F',
+                text: 'F',
+              },
+            ]}
+            onChange={handleChange('gender')}
           />
           <TextInputMask
             placeholder="Fecha de Nacimiento (DD/MM/YYYY)"
