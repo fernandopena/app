@@ -9,7 +9,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { TextInputMask, TextInputMaskMethods } from 'react-native-masked-text';
+import { TextInputMask } from 'react-native-masked-text';
+import moment from 'moment';
 import { MainStackNavProps } from '../../navigation/types';
 import Touchable from '../../components/Touchable';
 import Colors from '../../constants/Colors';
@@ -33,8 +34,7 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
     if (
       (state.phoneNumber || '') !== '' &&
       (state.gender || '') !== '' &&
-      (state.dob || '') !== '' &&
-      dobRef.current.isValid()
+      isValidDate()
     ) {
       setCanSave(true);
     } else {
@@ -42,6 +42,12 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
     }
   }, [state]);
 
+  function isValidDate() {
+    if (state.bob || '' !== '') {
+      return false;
+    }
+    return moment(state.dob, 'DD/MM/YYYY', true).isValid();
+  }
   async function handleContinue() {
     await savePreferences({ userInfo: state });
     navigation.navigate('Main');
