@@ -5,14 +5,28 @@ import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
+import * as SQLite from 'expo-sqlite';
 
 import useLinking from './navigation/useLinking';
-import { getPreferences } from './utils/config';
+import {
+  getPreferences,
+  SQLITE_DB_NAME,
+  SQLITE_DB_VERSION,
+  UserPreferences,
+  // clearPreferences,
+} from './utils/config';
 import MainNavigator from './navigation/MainNavigator';
+import Layout from './constants/Layout';
+
+const isWeb = Platform.OS === 'web';
+const db = !isWeb && SQLite.openDatabase(SQLITE_DB_NAME);
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
-  const [showOnboarding, setShowOnboarding] = React.useState(true);
+  // const [showOnboarding, setShowOnboarding] = React.useState(true);
+  const [preferences, setPreferences] = React.useState<
+    UserPreferences | undefined
+  >();
   const [initialNavigationState, setInitialNavigationState] = React.useState<
     any
   >();
@@ -24,6 +38,40 @@ export default function App(props) {
     async function loadResourcesAndDataAsync() {
       try {
         SplashScreen.preventAutoHide();
+
+        if (!isWeb) {
+          //Create DB Tables
+          db.transaction(
+            tx => {
+              // tx.executeSql('drop table diagnostics');
+              tx.executeSql(
+                'create table if not exists diagnostics (id integer primary key not null, answers text, result text, location text, created_at int);',
+              );
+              tx.executeSql(
+                'create table if not exists locations (id integer primary key not null, location text, created_at int);',
+              );
+              // Query user_version and compare to actual in case of migration is needed
+              // tx.executeSql(
+              //   'select * from pragma_user_version',
+              //   [],
+              //   (_, { rows }) => console.log(rows),
+              // );
+            },
+            (error: SQLError) =>
+              console.log('Error in transaction', error.message),
+            () => {
+              console.log('Create tables success');
+            },
+          );
+          // Set the user_version for future migrations purposes
+          db.exec(
+            [{ sql: `PRAGMA user_version = ${SQLITE_DB_VERSION};`, args: [] }],
+            false,
+            (error, rs) => {
+              // console.log('user_version', error, rs);
+            },
+          );
+        }
 
         // Load our initial navigation state
         setInitialNavigationState(await getInitialState());
@@ -53,8 +101,9 @@ export default function App(props) {
 
         await Promise.all(cacheImages);
 
+        // await clearPreferences();
         const preferences = await getPreferences();
-        setShowOnboarding(preferences.showOnboarding);
+        setPreferences(preferences);
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
@@ -78,7 +127,7 @@ export default function App(props) {
           ref={containerRef}
           initialState={initialNavigationState}
         >
-          <MainNavigator showOnboarding={showOnboarding} />
+          <MainNavigator {...preferences} />
         </NavigationContainer>
       </View>
     );
@@ -89,6 +138,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    ...Platform.select({
+      web: {
+        maxWidth: Layout.maxWidth,
+        margin: 'auto',
+        width: '100%',
+      },
+    }),
   },
   slide: {
     flex: 1,

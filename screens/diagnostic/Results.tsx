@@ -23,9 +23,8 @@ function PositiveResults() {
         RIESGO LEVE
       </Text>
       <Text style={styles.cardSubTitle}>
-        No contás con síntomas que puedan estar relacionados con el contagio de
-        coronavirus, como así tampoco haber estado posiblemente expuesto a gente
-        contagiada.
+        Según pautas oficiales, el conjunto de tus sintomas e historia no
+        implican contagio de coronavirus o alto riesgo.
       </Text>
       <Text style={styles.cardText}>
         Te proponemos realizar el aislamiento voluntario, repasando el listado
@@ -143,7 +142,7 @@ function NegativeResults() {
             textAlign: 'center',
           }}
         >
-          Ministerio de Salud de la Nación
+          Ministerio de Salud
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text
@@ -155,16 +154,15 @@ function NegativeResults() {
             }}
             onPress={async () => {
               try {
-                await Linking.openURL(`tel:0800-222-1002`);
+                await Linking.openURL(`tel:0800-800-26843`);
               } catch (e) {
                 Alert.alert('Error al intentar hacer la llamada');
               }
             }}
           >
-            0800-222-1002
+            0800-800-26843 (COVID)
           </Text>
         </View>
-        <Text>(opción 1)</Text>
       </View>
       <Text style={styles.cardText}>
         Si tus síntomas fueron cambiando, por favor volvé a realizar el
@@ -212,7 +210,7 @@ function NegativeResults() {
 //   );
 // }
 
-const CIRCLE_WIDTH = Layout.window.width * 1.5;
+const CIRCLE_WIDTH = Layout.window.width * 1.6;
 
 export default function Results({
   route,
@@ -234,20 +232,22 @@ export default function Results({
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.card}>
-          <View
-            style={{
-              ...StyleSheet.absoluteFillObject,
+        <View
+          style={[
+            {
+              position: 'absolute',
               backgroundColor: '#fff',
               height: CIRCLE_WIDTH,
               width: CIRCLE_WIDTH,
               borderRadius: CIRCLE_WIDTH / 2,
-              // top: -(CIRCLE_WIDTH / 4),
-              // left: -(CIRCLE_WIDTH / 4),
-              top: -120,
-              left: -100,
-            }}
-          ></View>
+              transform: [
+                { translateX: -(Layout.window.width * 0.3) },
+                { translateY: -(CIRCLE_WIDTH / 2) },
+              ],
+            },
+          ]}
+        />
+        <View style={styles.card}>
           {results === 'positive' && <PositiveResults />}
           {results === 'neutral' && <NeutralResults />}
           {results === 'negative' && <NegativeResults />}
