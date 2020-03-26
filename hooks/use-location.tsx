@@ -4,10 +4,9 @@ import { LocationData } from 'expo-location';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import * as Permissions from 'expo-permissions';
-import * as SQLite from 'expo-sqlite';
 
 import { locationService } from '../utils/locationService';
-import { SQLITE_DB_NAME } from '../utils/config';
+import { saveLocationLocally } from '../utils/localStorageHelper';
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
@@ -27,8 +26,6 @@ if (!TaskManager.isTaskDefined(LOCATION_TASK_NAME)) {
   });
 }
 
-const isWeb = Platform.OS === 'web';
-const db = !isWeb && SQLite.openDatabase(SQLITE_DB_NAME);
 
 export const useLocation = (
   {
@@ -52,6 +49,7 @@ export const useLocation = (
         try {
           let location = await Location.getCurrentPositionAsync();
           setLocation(location);
+          saveLocationLocally(location);
           if (
             runInBackground &&
             (Platform.OS !== 'ios' ||
@@ -85,23 +83,8 @@ export const useLocation = (
 
   useEffect(() => {
     function onLocationUpdate(location) {
-      // console.log('onLocationUpdate -> location', location);
-      db.transaction(
-        tx => {
-          tx.executeSql(
-            'insert into locations (location, created_at) values (?, strftime("%s","now"))',
-            [JSON.stringify(location)],
-          );
-          // tx.executeSql('select * from locations', [], (_, { rows }) =>
-          //   console.log(rows),
-          // );
-        },
-        (error: SQLError) =>
-          console.log('Error inserting values', error.message),
-        () => {
-          // console.log('Location saved!');
-        },
-      );
+      console.log('onLocationUpdate -> location', location);
+      saveLocationLocally(location);
     }
 
     locationService.subscribe(onLocationUpdate);
