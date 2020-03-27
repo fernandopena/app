@@ -15,6 +15,7 @@
     "@react-navigation/stack": "^5.2.1",
     "axios": "^0.19.2",
     "expo": "~36.0.0",
+    "expo-analytics": "^1.0.14",
     "expo-location": "~8.0.0",
     "expo-sqlite": "~8.0.0",
     "expo-task-manager": "~8.0.0",

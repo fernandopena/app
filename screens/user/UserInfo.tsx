@@ -43,7 +43,7 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
   }, [state]);
 
   function isValidDate() {
-    if (state.bob || '' !== '') {
+    if ((state.dob || '') === '') {
       return false;
     }
     return moment(state.dob, 'D/M/YYYY', true).isValid();
