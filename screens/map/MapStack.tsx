@@ -9,6 +9,8 @@ import MapInfo from './MapInfo';
 import { RouteProp, useFocusEffect } from '@react-navigation/native';
 import { StatusBar, Platform } from 'react-native';
 
+import { pageHit } from '../../utils/analytics';
+
 type MapParamsList = {
   Map: undefined;
   MapInfo: undefined;
@@ -27,6 +29,7 @@ export default function MapStack() {
     React.useCallback(() => {
       StatusBar.setBarStyle('dark-content');
       Platform.OS === 'android' && StatusBar.setBackgroundColor('transparent');
+      pageHit('Map');
     }, []),
   );
 

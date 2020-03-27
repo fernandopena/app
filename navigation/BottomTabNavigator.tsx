@@ -20,6 +20,8 @@ import { TransitionSpec } from '@react-navigation/stack/lib/typescript/src/types
 import { DiagnosticParamsList } from '../screens/diagnostic/types';
 import { HelpButton } from '../components/HelpButton';
 
+import { pageHit } from '../utils/analytics';
+
 const INITIAL_ROUTE_NAME = 'Map';
 const isIOS = Platform.OS === 'ios';
 const isWeb = Platform.OS === 'web';
@@ -61,6 +63,7 @@ function PreventionNavStack() {
       StatusBar.setBarStyle('light-content');
       Platform.OS === 'android' &&
         StatusBar.setBackgroundColor(Colors.primaryColor);
+      pageHit('Prevention');
     }, []),
   );
   return (
@@ -101,6 +104,7 @@ function DiagnosticNavStack() {
       StatusBar.setBarStyle('light-content');
       Platform.OS === 'android' &&
         StatusBar.setBackgroundColor(Colors.primaryColor);
+      pageHit('Diagnostic');
     }, []),
   );
   return (

@@ -5,24 +5,25 @@ import { savePreferences, getPreferences } from '../../utils/config';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
 import { MainStackNavProps } from '../../navigation/types';
+import { pageHit } from '../../utils/analytics';
 
 const slides = [
   {
-    key: 'somethun',
+    key: 'slide1',
     text:
       'CoTrack necesita saber tu ubicación para avisarte en tiempo real si en tu recorrido estuviste en contacto cercano con alguna persona contagiada',
     image: require('../../assets/images/prevention/spread.png'),
     backgroundColor: '#fff',
   },
   {
-    key: 'somethun-dos',
+    key: 'slide2',
     text:
       'Si presentás síntomas o creés haber estado en contacto con alguien infectado, CoTrack te puede ayudar a realizar un diagnóstico y aconsejarte qué hacer según el resultado',
     image: require('../../assets/images/prevention/fever.png'),
     backgroundColor: '#fff',
   },
   {
-    key: 'somethun3',
+    key: 'slide3',
     text:
       'CoTrack te brinda información completa y confiable para ayudar a prevenir la infección, medidas para resguardarse e información útil y actualizada',
     image: require('../../assets/images/prevention/washing.png'),
@@ -79,6 +80,10 @@ export const OnboardingSlides = ({ navigation }: MainStackNavProps<'Help'>) => {
       buttonTextStyle={styles.buttonText}
       activeDotStyle={styles.activeDot}
       slides={slides}
+      onLoad={pageHit(`Slide1`)}
+      onSlideChange={index => {
+        pageHit(`Slide${index}`);
+      }}
       onDone={handleDone}
       contentContainerStyle={{
         justifyContent: 'center',
