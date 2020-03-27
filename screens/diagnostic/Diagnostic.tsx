@@ -6,19 +6,16 @@ import {
   Platform,
   ScrollView,
   StatusBar,
-  AsyncStorage,
 } from 'react-native';
 import { useScrollToTop } from '@react-navigation/native';
-import * as SQLite from 'expo-sqlite';
 import * as Location from 'expo-location';
 
 import { QuestResults } from './types';
 import Colors from '../../constants/Colors';
 import Touchable from '../../components/Touchable';
-import { SQLITE_DB_NAME } from '../../utils/config';
+import { saveDiagnosticLocally } from '../../utils/localStorageHelper';
+import { syncRecordsDataWithServer } from '../../utils/syncStorageHelper';
 
-const isWeb = Platform.OS === 'web';
-const db = !isWeb && SQLite.openDatabase(SQLITE_DB_NAME);
 
 const initialState = {
   symptoms: {},
@@ -120,7 +117,6 @@ function Questionary({ onShowResults }: QuestionaryProps) {
   }, [state]);
 
   const handleShowResults = result => {
-    console.log('Diagnostic saved!');
     onShowResults(result);
     // scrollRef.current.scrollTo({ x: 0, animated: false });
   };
@@ -161,41 +157,10 @@ function Questionary({ onShowResults }: QuestionaryProps) {
       location = '';
     }
 
-    if (isWeb) {
-      const diagnostics =
-        JSON.parse(await AsyncStorage.getItem('diagnostics')) || [];
-      const now = new Date().getTime();
-      await AsyncStorage.setItem(
-        `diagnostics`,
-        JSON.stringify([
-          ...diagnostics,
-          {
-            answers: state,
-            result,
-            location,
-            created_at: now,
-          },
-        ]),
-      );
+    saveDiagnosticLocally(state, result,location,()=>{
       handleShowResults(result);
-    } else {
-      db.transaction(
-        tx => {
-          tx.executeSql(
-            'insert into diagnostics (answers, result, location, created_at) values (?, ?, ?, strftime("%s","now"))',
-            [JSON.stringify(state), result, JSON.stringify(location)],
-          );
-          // tx.executeSql('select * from diagnostics', [], (_, { rows }) =>
-          //   console.log(rows),
-          // );
-        },
-        (error: SQLError) =>
-          console.log('Error inserting values', error.message),
-        () => {
-          handleShowResults(result);
-        },
-      );
-    }
+      syncRecordsDataWithServer();
+    });
   };
 
   const handleYesNoPress = values => {
