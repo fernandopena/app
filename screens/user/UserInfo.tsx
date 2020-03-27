@@ -98,11 +98,13 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
               //single dropdown item's text style
               color: '#222',
             }}
-            itemsContainerStyle={{
-              //items container style you can pass maxHeight
-              //to restrict the items dropdown hieght
-              maxHeight: '30vw',
-            }}
+            itemsContainerStyle={
+              {
+                //items container style you can pass maxHeight
+                //to restrict the items dropdown hieght
+                // maxHeight: '30vw',
+              }
+            }
             items={provinces}
             //mapping of item array
             // defaultIndex={2}
