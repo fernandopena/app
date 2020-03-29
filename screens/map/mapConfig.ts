@@ -27,7 +27,9 @@ const dataIsOld = (lastUpdated, updateInterval) => {
 }
 
 const locationIsFar = (previousLocation, updatedLocation) => {
-  if (getDistance(previousLocation, updatedLocation) > HEATMAP_UPDATE_DISTANCE) {
+  if (!previousLocation||
+    !updatedLocation||
+    getDistance(previousLocation, updatedLocation) > HEATMAP_UPDATE_DISTANCE) {
     return true;
   }
   return false;
@@ -49,14 +51,7 @@ export const shouldUpdateHeatMap = (currentHeatmapData, updatedLocation) => {
 
 // Default location is Argentina's coords
 export const DEFAULT_LOCATION = { latitude: -34.604476, longitude: -58.374188 };
-
-export const DEFAULT_LOCATION_WEB = {
-  center: {
-    lat: DEFAULT_LOCATION.latitude,
-    lng: DEFAULT_LOCATION.longitude,
-  },
-  zoom: HEATMAP_WEB_ZOOM,
-};
+export const DEFAULT_LOCATION_WEB = { lat: DEFAULT_LOCATION.latitude, lng: DEFAULT_LOCATION.longitude };
 
 export const HEATMAP_HARDCODED_POSITIONS = [
   { lat: -34.612146, lng: -58.384734, weight: 80 },
