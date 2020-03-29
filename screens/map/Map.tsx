@@ -15,14 +15,13 @@ import { useLocation } from '../../hooks/use-location';
 import Colors from '../../constants/Colors';
 
 import { panelStyles, mapStyles } from './mapStyles';
-import { 
-  shouldUpdateHeatMap, 
-  LATITUDE_DELTA, 
-  LONGITUDE_DELTA, 
+import {
+  shouldUpdateHeatMap,
+  LATITUDE_DELTA,
+  LONGITUDE_DELTA,
   HEATMAP_GET_DATA_DISTANCE,
   DEFAULT_LOCATION,
- } from './mapConfig';
-
+} from './mapConfig';
 
 function PanelContent() {
   return (
@@ -64,8 +63,6 @@ function PanelHeader() {
   );
 }
 
-
-
 export default function Map({ navigation }) {
   const { location, error } = useLocation({ runInBackground: true });
   const [mapReady, setMapReady] = useState(false);
@@ -75,31 +72,36 @@ export default function Map({ navigation }) {
 
   useEffect(() => {
     if (location) {
-      const locationCoords = {lat: location.coords.latitude, lng: location.coords.longitude};
+      const locationCoords = {
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      };
       if (shouldUpdateHeatMap(heatmapData, locationCoords)) {
         getHeatmapData({
           ...locationCoords,
-          distance: HEATMAP_GET_DATA_DISTANCE
-        }).then((response)=>{
-          const positions = response.data;
-          const mapData = positions.map(item => ({
-            latitude: item.lat,
-            longitude: item.lng,
-            weight: item.weight
-          }));
-          const now = new Date().getTime();
-          const heatmapData = {
-            mapData: mapData,
-            lastUpdated: now,
-            center: locationCoords
-          };
-          setHeatmapData(heatmapData);
-        }).catch((error) => {
-          console.log(error);
-        });
+          distance: HEATMAP_GET_DATA_DISTANCE,
+        })
+          .then(response => {
+            const positions = response.data;
+            const mapData = positions.map(item => ({
+              latitude: item.lat,
+              longitude: item.lng,
+              weight: item.weight,
+            }));
+            const now = new Date().getTime();
+            const heatmapData = {
+              mapData: mapData,
+              lastUpdated: now,
+              center: locationCoords,
+            };
+            setHeatmapData(heatmapData);
+          })
+          .catch(error => {
+            console.log(error);
+          });
       }
     }
-  }, [location]);    
+  }, [location]);
 
   return (
     <View style={[mapStyles.container]}>
@@ -118,7 +120,7 @@ export default function Map({ navigation }) {
             : undefined
         }
         initialCamera={{
-          center: location?location.coords:DEFAULT_LOCATION,
+          center: location ? location.coords : DEFAULT_LOCATION,
           pitch: 1,
           heading: 1,
           altitude: 11,
@@ -128,11 +130,11 @@ export default function Map({ navigation }) {
         showsMyLocationButton={false}
         onMapReady={() => setMapReady(true)}
       >
-        <Heatmap
-            points={heatmapData.mapData}
-        ></Heatmap>
+        {heatmapData.mapData ? (
+          <Heatmap points={heatmapData.mapData}></Heatmap>
+        ) : null}
       </MapView>
-      
+
       <SafeAreaView style={[mapStyles.buttonContainer]}>
         <TouchableOpacity
           activeOpacity={0.8}
