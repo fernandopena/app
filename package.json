@@ -19,6 +19,7 @@
     "expo-location": "~8.0.0",
     "expo-sqlite": "~8.0.0",
     "expo-task-manager": "~8.0.0",
+    "geolib": "^3.2.1",
     "google-map-react": "^1.1.7",
     "moment": "^2.24.0",
     "react": "~16.9.0",

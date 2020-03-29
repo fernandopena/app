@@ -16,6 +16,7 @@ import Touchable from '../../components/Touchable';
 import Colors from '../../constants/Colors';
 import { savePreferences } from '../../utils/config';
 import RadioButtons from '../../components/RadioButtons';
+import DatePicker from '../../components/DatePicker';
 
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import { provinces } from '../../utils/data';
@@ -27,7 +28,6 @@ function reducer(state, newState) {
 const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
   const [state, setState] = useReducer(reducer, {});
   const [canSave, setCanSave] = useState(false);
-  const dobRef = useRef<any | undefined>();
 
   const handleChange = key => value => {
     setState({ [key]: value });
@@ -121,44 +121,28 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
             placeholder="# Celular"
             value={state.phoneNumber}
             onChangeText={handleChange('phoneNumber')}
-            autoFocus
             keyboardType="phone-pad"
             style={styles.input}
+            blurOnSubmit
           />
           <RadioButtons
             label="Sexo"
             options={[
               {
                 key: 'M',
-                text: 'M',
+                text: 'Masculino',
               },
               {
                 key: 'F',
-                text: 'F',
+                text: 'Femenino',
               },
             ]}
             onChange={handleChange('gender')}
           />
-          {Platform.OS === 'web' ? (
-            <TextInput
-              placeholder="Fecha de Nacimiento (DD/MM/YYYY)"
-              value={state.dob}
-              onChangeText={handleChange('dob')}
-              style={styles.input}
-            />
-          ) : (
-            <TextInputMask
-              placeholder="Fecha de Nacimiento (DD/MM/YYYY)"
-              type="datetime"
-              options={{
-                format: 'DD/MM/YYYY',
-              }}
-              value={state.dob}
-              onChangeText={handleChange('dob')}
-              style={styles.input}
-              ref={dobRef}
-            />
-          )}
+          <DatePicker
+            label="Fecha de Nacimiento"
+            onChange={handleChange('dob')}
+          />
           <Touchable
             enabled={canSave}
             style={[
